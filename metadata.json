@@ -1,0 +1,6 @@
+{
+  "name": "VERA - Fashion & Beauty E-Commerce",
+  "description": "VERA is a modern, premium fashion and beauty e-commerce platform featuring secure roles, interactive checkouts, order tracking, articles, and a powerful admin/superadmin analytics dashboard.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
