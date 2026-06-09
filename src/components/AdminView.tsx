@@ -18,12 +18,12 @@ import {
   Send,
   Eye,
   Settings,
-  X
-  ,
+  X,
   ChevronDown,
-  LogOut
+  LogOut,
+  UserPlus
 } from 'lucide-react';
-import { Product, Order, Article } from '../types';
+import { Product, Order, Article, AdminUser } from '../types';
 
 interface AdminViewProps {
   products: Product[];
@@ -35,10 +35,13 @@ interface AdminViewProps {
   articles: Article[];
   onAddArticle: (article: Article) => void;
   onDeleteArticle: (id: string) => void;
-  isSuperAdmin?: boolean; // We re-use some of this in super admin view!
+  isSuperAdmin?: boolean;
   currentStaffName?: string;
   onLogout: () => void;
-  handleAdminLogout?: () => void;
+  // Props untuk Super Admin - Staff Management
+  adminUsers?: AdminUser[];
+  onAddAdminUser?: (admin: AdminUser) => void;
+  onToggleAdminStatus?: (id: string) => void;
 }
 
 export default function AdminView({
@@ -51,14 +54,16 @@ export default function AdminView({
   articles,
   onAddArticle,
   onDeleteArticle,
-  isSuperAdmin = false,
+  isSuperAdmin=false,
   currentStaffName,
   onLogout,
-  handleAdminLogout
+  adminUsers = [],
+  onAddAdminUser,
+  onToggleAdminStatus
 }: AdminViewProps) {
   // Navigation
-  const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'catalog' | 'orders' | 'articles' | 'support'>('dashboard');
-
+  const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'catalog' | 'orders' | 'articles' | 'support' | 'staff'>('dashboard');
+   console.log("IS SUPER ADMIN:", isSuperAdmin);
   // Support simulator state
   const [supportTickets, setSupportTickets] = useState([
     { id: 't-1', name: 'Maya Anindita', email: 'maya.a@outlook.id', query: 'Halo Admin, apakah serum Rose Barrier-nya aman dipakai berbarengan dengan retinol 0.5% saya setiap malam?', status: 'pending', reply: '' },
@@ -77,8 +82,8 @@ export default function AdminView({
     description: '',
     stock: 20,
     ingredients: '',
-    sizes: '', // comma separated string representation
-    colors: '', // comma separated string representation
+    sizes: '',
+    colors: '',
   });
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
@@ -92,6 +97,12 @@ export default function AdminView({
     readTime: '5 min read',
     tags: 'Skincare, Barrier'
   });
+
+  // Staff Management states (Super Admin only)
+  const [newAdminName, setNewAdminName] = useState('');
+  const [newAdminEmail, setNewAdminEmail] = useState('');
+  const [newAdminPass, setNewAdminPass] = useState('');
+  const [newAdminRole, setNewAdminRole] = useState<'admin' | 'super_admin'>('admin');
 
   // Calculate high quality analytics indicators
   const totalRevenue = orders
@@ -206,6 +217,42 @@ export default function AdminView({
     setIsArticleModalOpen(false);
   };
 
+  // Staff Management helper (Super Admin only)
+  const handleCreateStaff = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newAdminName.trim() || !newAdminEmail.trim()) return;
+
+    if (onAddAdminUser) {
+      onAddAdminUser({
+        id: `adm-${Math.floor(100 + Math.random() * 900)}`,
+        name: newAdminName,
+        email: newAdminEmail,
+        role: newAdminRole,
+        avatar: newAdminName.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase(),
+        status: 'active'
+      });
+    }
+
+    setNewAdminName('');
+    setNewAdminEmail('');
+    setNewAdminPass('');
+    alert(`Staff account ${newAdminName.toUpperCase()} successfully deployed to infrastructure registry.`);
+  };
+
+  // Dynamic sidebar menu based on role
+  const sidebarMenu = [
+    { id: 'dashboard', label: 'DASHBOARD', icon: TrendingUp },
+    { id: 'catalog', label: 'PRODUCTS', icon: Layers },
+    { id: 'orders', label: 'ORDERS', icon: ShoppingCart },
+    { id: 'articles', label: 'ARTICLES', icon: FileText },
+    { id: 'support', label: 'INBOX', icon: Inbox },
+  ];
+
+  if (isSuperAdmin) {
+    sidebarMenu.push({ id: 'staff', label: 'STAFF REGISTRY CONTROL', icon: Users });
+  }
+  
+
   return (
     <div className="bg-stone-50 text-black min-h-screen font-mono flex flex-col md:flex-row" id="admin-view-root">
       
@@ -223,13 +270,7 @@ export default function AdminView({
 
         {/* Menu Navigasi Utama */}
         <nav className="flex-1 p-4 space-y-1.5">
-          {[
-            { id: 'dashboard', label: 'DASHBOARD', icon: TrendingUp },
-            { id: 'catalog', label: 'PRODUCTS', icon: Layers },
-            { id: 'orders', label: 'ORDERS', icon: ShoppingCart },
-            { id: 'articles', label: 'ARTICLES', icon: FileText },
-            { id: 'support', label: 'INBOX', icon: Inbox },
-          ].map(sb => {
+          {sidebarMenu.map(sb => {
             const IconComp = sb.icon;
             const isActive = activeSubTab === sb.id;
             return (
@@ -348,7 +389,7 @@ export default function AdminView({
 
           // Compute dynamic coordinate for SVG June node based on revenue 
           const currentJuneRevenue = 6800000 + totalRevenue;
-          const maxScale = 15000000; // 15jt max range 
+          const maxScale = 15000000;
           const junCoordY = Math.max(20, Math.min(160, 160 - (currentJuneRevenue / maxScale) * 130));
           const linePath = `M 40 135 L 120 115 L 200 95 L 280 70 L 360 50 L 440 ${junCoordY}`;
           const areaPath = `${linePath} L 440 160 L 40 160 Z`;
@@ -429,8 +470,6 @@ export default function AdminView({
                     <h4 className="text-[10px] tracking-widest uppercase font-semibold text-stone-400">FINANCIAL VELOCITY & CATEGORY RATINGS</h4>
                     <p className="text-xs text-stone-500 mt-1 uppercase tracking-wider font-light">Active revenue velocity and product distribution statistics.</p>
                   </div>
-
-                  
 
                   {/* Horizontal Bar Chart showing Category Revenue Split */}
                   <div className="space-y-4 font-mono uppercase text-[10px] tracking-wider">
@@ -898,6 +937,98 @@ export default function AdminView({
                   )}
                 </div>
               ))}
+            </div>
+          </div>
+        )}
+
+        {/* SUBTAB: STAFF MANAGEMENT (Super Admin Only) */}
+        {activeSubTab === 'staff' && isSuperAdmin && (
+          <div className="space-y-8 animate-fade-in" id="staff-registry-workspace">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+              
+              {/* Form Registrasi Akun Staff Baru */}
+              <div className="bg-white border border-stone-200 p-6 rounded-none space-y-4">
+                <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
+                  <UserPlus className="w-4 h-4 text-black" />
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-black">DEPLOY NEW STAFF ACCOUNT</h3>
+                </div>
+                <form onSubmit={handleCreateStaff} className="space-y-4 font-mono text-[11px]">
+                  <div>
+                    <label className="block text-[8px] uppercase tracking-widest text-stone-500 font-bold mb-1">Full Name</label>
+                    <input type="text" required value={newAdminName} onChange={(e) => setNewAdminName(e.target.value)} placeholder="Alexander Light" className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-none focus:outline-none focus:border-black uppercase text-xs"/>
+                  </div>
+                  <div>
+                    <label className="block text-[8px] uppercase tracking-widest text-stone-500 font-bold mb-1">Corporate Email</label>
+                    <input type="email" required value={newAdminEmail} onChange={(e) => setNewAdminEmail(e.target.value)} placeholder="username@vera.com" className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-none focus:outline-none focus:border-black text-xs"/>
+                  </div>
+                  <div>
+                    <label className="block text-[8px] uppercase tracking-widest text-stone-500 font-bold mb-1">Secure Passkey Code</label>
+                    <input type="password" required value={newAdminPass} onChange={(e) => setNewAdminPass(e.target.value)} placeholder="••••••••" className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-none focus:outline-none focus:border-black text-xs"/>
+                  </div>
+                  <div>
+                    <label className="block text-[8px] uppercase tracking-widest text-stone-500 font-bold mb-1">Privilege Level</label>
+                    <select value={newAdminRole} onChange={(e) => setNewAdminRole(e.target.value as any)} className="w-full bg-stone-50 border border-stone-200 p-2.5 rounded-none focus:outline-none focus:border-black text-xs font-mono uppercase">
+                      <option value="admin">Operations Admin Operator</option>
+                      <option value="super_admin">Super System Admin Root</option>
+                    </select>
+                  </div>
+                  <button type="submit" className="w-full bg-black text-white py-3 font-bold text-[9px] uppercase tracking-widest hover:bg-stone-900 border border-black transition-colors rounded-none cursor-pointer">INITIALIZE ACCOUNT</button>
+                </form>
+              </div>
+
+              {/* Tabel Daftar Database Admin Aktif */}
+              <div className="bg-white border border-stone-200 p-6 rounded-none lg:col-span-2 space-y-4">
+                <div className="flex items-center gap-2 border-b border-stone-100 pb-3">
+                  <Users className="w-4 h-4 text-black" />
+                  <h3 className="text-[10px] font-bold uppercase tracking-widest text-black">ACTIVE SYSTEM OPERATORS RECORD</h3>
+                </div>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left border-collapse font-mono text-[10px]">
+                    <thead>
+                      <tr className="border-b border-stone-200 bg-stone-50 text-stone-500 uppercase text-[8px] font-bold tracking-wider">
+                        <th className="p-3">Staff Profile</th>
+                        <th className="p-3">Designation Role</th>
+                        <th className="p-3">Status</th>
+                        <th className="p-3 text-right">Actions Panel</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-stone-100">
+                      {adminUsers.map((user) => (
+                        <tr key={user.id} className="hover:bg-stone-50/50 transition-colors">
+                          <td className="p-3">
+                            <div className="flex items-center gap-2.5">
+                              <div className="w-7 h-7 bg-stone-100 border border-stone-200 text-stone-800 font-bold flex items-center justify-center text-[9px] rounded-none">
+                                {user.name.split(" ").map(n => n[0]).join("").slice(0,2).toUpperCase()}
+                              </div>
+                              <div>
+                                <p className="font-bold text-stone-900 uppercase">{user.name}</p>
+                                <p className="text-stone-400 text-[8px] lowercase">{user.email}</p>
+                              </div>
+                            </div>
+                          </td>
+                          <td className="p-3">
+                            <span className={`px-2 py-0.5 text-[8px] font-bold uppercase tracking-wider border ${
+                              user.role === 'super_admin' ? 'bg-stone-950 text-white border-black' : 'bg-white text-stone-700 border-stone-300'
+                            }`}>{user.role === 'super_admin' ? 'ROOT_ROOT' : 'OPERATOR_OPS'}</span>
+                          </td>
+                          <td className="p-3">
+                            <div className="flex items-center gap-1.5 font-bold">
+                              <span className={`w-1.5 h-1.5 rounded-none ${user.status === 'active' ? 'bg-black animate-pulse' : 'bg-stone-300'}`} />
+                              <span className={user.status === 'active' ? 'text-stone-900 uppercase' : 'text-stone-400 uppercase line-through'}>{user.status}</span>
+                            </div>
+                          </td>
+                          <td className="p-3 text-right">
+                            <button onClick={() => onToggleAdminStatus && onToggleAdminStatus(user.id)} className={`px-2.5 py-1.5 text-[8px] font-bold uppercase tracking-widest border transition-colors rounded-none cursor-pointer ${
+                              user.status === 'active' ? 'bg-white text-red-600 border-stone-200 hover:border-red-600 hover:bg-red-50' : 'bg-black text-white border-black hover:bg-stone-900'
+                            }`}>{user.status === 'active' ? 'SUSPEND SESSION' : 'REVIVE ACCOUNT'}</button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
             </div>
           </div>
         )}

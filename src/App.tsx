@@ -163,7 +163,8 @@ export default function App() {
   const handleAdminLogout = () => {
     setActiveRole("customer");
   };
-
+console.log("activeRole =", activeRole);
+console.log(activeRole === "super_admin");
   return (
     <div className="bg-stone-50 select-none min-h-screen">
       {/* Floating simulator switcher */}
@@ -179,7 +180,7 @@ export default function App() {
           cart={cart}
           onUpdateCart={setCart}
           articles={articles}
-          onStaffRedirect={() => handleRoleChange("admin")}
+          onStaffRedirect={handleRoleChange}
         />
       )}
 
@@ -199,6 +200,7 @@ export default function App() {
           currentStaffName={
             activeRole === "super_admin" ? "Management Root" : "Budi Santoso"
           }
+          isSuperAdmin={activeRole === "super_admin"}
         />
       )}
     </div>
