@@ -1,0 +1,6 @@
+{
+  "name": "VERA Fashion & Beauty",
+  "description": "An elegant, minimal e-commerce platform for premium beauty and fashion. Features client-side state for storefront browsing, cart management, checkout, and admin analytics dashboards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
