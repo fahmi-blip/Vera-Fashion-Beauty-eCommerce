@@ -19,6 +19,9 @@ import {
   Eye,
   Settings,
   X
+  ,
+  ChevronDown,
+  LogOut
 } from 'lucide-react';
 import { Product, Order, Article } from '../types';
 
@@ -33,6 +36,9 @@ interface AdminViewProps {
   onAddArticle: (article: Article) => void;
   onDeleteArticle: (id: string) => void;
   isSuperAdmin?: boolean; // We re-use some of this in super admin view!
+  currentStaffName?: string;
+  onLogout: () => void;
+  handleAdminLogout?: () => void;
 }
 
 export default function AdminView({
@@ -46,6 +52,10 @@ export default function AdminView({
   onAddArticle,
   onDeleteArticle,
   isSuperAdmin = false
+  ,
+  currentStaffName,
+  onLogout,
+  handleAdminLogout
 }: AdminViewProps) {
   // Navigation
   const [activeSubTab, setActiveSubTab] = useState<'dashboard' | 'catalog' | 'orders' | 'articles' | 'support'>('dashboard');
@@ -71,6 +81,7 @@ export default function AdminView({
     sizes: '', // comma separated string representation
     colors: '', // comma separated string representation
   });
+  const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
 
   // Article Form states
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
@@ -200,46 +211,25 @@ export default function AdminView({
     <div className="bg-stone-50 text-black min-h-screen font-mono flex flex-col md:flex-row" id="admin-view-root">
       
       {/* LEFT SIDEBAR (Classic Dashboard Sidebar) */}
-      <aside className="w-full md:w-64 bg-black text-stone-300 border-r border-stone-850 flex flex-col md:h-screen sticky top-0 shrink-0 z-40 shadow-none rounded-none">
-        {/* Brand Banner */}
-        <div className="px-6 py-5 border-b border-stone-850 flex items-center justify-between bg-black">
-          <div className="flex items-center gap-2.5">
-            <span className="text-lg font-serif font-light tracking-[0.2em] text-white uppercase">VERA</span>
-            <span className="text-[8px] font-mono bg-stone-900 text-stone-300 border border-stone-800 px-2 py-0.5 tracking-wider font-semibold select-none">
-              {isSuperAdmin ? 'SYSTEM' : 'ADMIN'}
-            </span>
-          </div>
+      <aside className="w-64 bg-black border-r border-stone-800 flex flex-col shrink-0 min-h-screen">
+        {/* Area Logo Premium (Hanya logo di bagian atas sidebar) */}
+        <div className="p-6 border-b border-stone-900 flex items-center gap-2">
+          <span className="text-lg font-serif font-black tracking-[0.3em] text-white">
+            VERA
+          </span>
+          <span className="text-[7px] font-mono bg-stone-900 border border-stone-800 text-stone-400 px-1.5 py-0.5 tracking-widest font-bold">
+            CORE
+          </span>
         </div>
 
-        {/* Profile Card Summary */}
-        <div className="p-5 border-b border-stone-850 bg-stone-950/30">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-none bg-stone-800 text-white font-medium font-mono text-xs flex items-center justify-center border border-stone-700">
-              {isSuperAdmin ? 'SYS' : 'OPS'}
-            </div>
-            <div>
-              <h2 className="text-xs font-semibold tracking-wider text-white uppercase">
-                {isSuperAdmin ? 'SUPER ADMIN PRIVILEGE' : 'Budi Santoso'}
-              </h2>
-              <p className="text-[9px] text-stone-500 font-mono mt-0.5 tracking-wider uppercase">
-                {isSuperAdmin ? 'ROOT AUTHOR' : 'OPERATOR PRINCIPAL'}
-              </p>
-              <div className="flex items-center gap-1 mt-1">
-                <span className="w-1.5 h-1.5 bg-neutral-400 rounded-none" />
-                <span className="text-[8px] text-stone-400 uppercase tracking-widest font-mono">Live Session Synced</span>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Vertical Navigation Items */}
+        {/* Menu Navigasi Utama */}
         <nav className="flex-1 p-4 space-y-1.5">
           {[
-            { id: 'dashboard', label: 'SUMMARY ANALYTICS', icon: TrendingUp },
-            { id: 'catalog', label: 'PRODUCT CATALOGUE', icon: Layers },
-            { id: 'orders', label: 'ORDERS REGISTRY', icon: ShoppingCart },
-            { id: 'articles', label: 'EDITORS\' JOURNAL', icon: FileText },
-            { id: 'support', label: 'CRM SYSTEM AUDIT', icon: Inbox },
+            { id: 'dashboard', label: 'DASHBOARD', icon: TrendingUp },
+            { id: 'catalog', label: 'PRODUCTS', icon: Layers },
+            { id: 'orders', label: 'ORDERS', icon: ShoppingCart },
+            { id: 'articles', label: 'ARTICLES', icon: FileText },
+            { id: 'support', label: 'INBOX', icon: Inbox },
           ].map(sb => {
             const IconComp = sb.icon;
             const isActive = activeSubTab === sb.id;
@@ -249,7 +239,7 @@ export default function AdminView({
                 onClick={() => setActiveSubTab(sb.id as any)}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-3 text-[10px] tracking-widest uppercase transition-all text-left cursor-pointer rounded-none border ${
                   isActive 
-                    ? 'bg-white text-black border-white' 
+                    ? 'bg-white text-black border-white font-bold' 
                     : 'text-stone-400 border-transparent hover:text-white hover:bg-stone-900'
                 }`}
               >
@@ -259,35 +249,89 @@ export default function AdminView({
             );
           })}
         </nav>
-
-        {/* Sidebar Footer Info */}
-        <div className="p-4 border-t border-stone-850 text-[9px] text-stone-550 font-mono space-y-1 bg-black">
-          <div className="flex items-center justify-between">
-            <span className="uppercase tracking-wider">SECURE ROUTE:</span>
-            <span className="text-white">PORT 3000</span>
-          </div>
-          <div className="text-[8px] font-light text-stone-600 tracking-wider">Built with Antigravity Build Studio</div>
-        </div>
       </aside>
 
       {/* RIGHT SIDE PANEL WORKSTATION */}
       <div className="flex-1 flex flex-col min-w-0 bg-stone-50 overflow-y-auto">
         
         {/* Toolbar header */}
-        <header className="bg-white border-b border-stone-250 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0">
+        <header className="bg-white border-b border-stone-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0 relative">
+          
+          {/* Sisi Kiri: Informasi Judul & Akses Kontrol */}
           <div>
             <h1 className="text-xs font-serif font-bold text-black tracking-[0.2em] uppercase">
-              WORKSPACE PANEL &raquo; {activeSubTab}
+              {activeSubTab}
             </h1>
             <p className="text-[9px] text-stone-500 font-mono uppercase tracking-wider mt-0.5">
               Access level: <strong className="text-black font-semibold">{isSuperAdmin ? 'SUPER SYSTEM ROOT' : 'COUTURE MANAGEMENT'}</strong> &bull; Total records: {products.length} catalog items.
             </p>
           </div>
 
-          <div className="flex items-center gap-3 flex-wrap text-xs font-mono">
-            <span className="text-[8px] bg-white text-stone-700 border border-stone-200 px-3 py-1.5 rounded-none tracking-widest uppercase">
-              INGRESS SECURE SSL ✔
-            </span>
+          {/* Sisi Kanan: Widget Utilitas SSL & Dropdown Profil Akun Staff */}
+          <div className="flex items-center gap-4 flex-wrap text-xs font-mono">
+
+            {/* Dropdown Menu Container */}
+            <div className="relative" id="admin-profile-dropdown-root">
+              <button
+                onClick={() => setIsProfileDropdownOpen(!isProfileDropdownOpen)}
+                className={`flex items-center gap-3 px-3 py-2 border transition-all rounded-none text-left cursor-pointer bg-white text-black ${
+                  isProfileDropdownOpen ? 'border-black bg-stone-50' : 'border-stone-200 hover:border-stone-400'
+                }`}
+              >
+                {/* Avatar Initial Kotak Monokrom */}
+                <div className="w-6 h-6 bg-black text-white flex items-center justify-center font-bold text-[9px] rounded-none select-none">
+                  {currentStaffName ? currentStaffName.split(" ").map((n: string) => n[0]).join("").slice(0, 2).toUpperCase() : "ST"}
+                </div>
+                
+                {/* Informasi Nama */}
+                <div className="hidden sm:block">
+                  <p className="text-[9px] font-bold tracking-wider uppercase leading-none text-stone-900">
+                    {currentStaffName || "Active Operator"}
+                  </p>
+                  <p className="text-[7px] text-stone-400 tracking-widest uppercase mt-1">
+                    {isSuperAdmin ? "SYSTEM ROOT" : "OPERATIONS"}
+                  </p>
+                </div>
+
+                <ChevronDown className={`w-3 h-3 text-stone-400 transition-transform duration-200 ${isProfileDropdownOpen ? 'rotate-180 text-black' : ''}`} />
+              </button>
+
+              {/* Lapisan Dropdown Overlay Menu */}
+              {isProfileDropdownOpen && (
+                <>
+                  {/* Backdrop transparan untuk menutup dropdown ketika klik di luar area */}
+                  <div 
+                    className="fixed inset-0 z-40 cursor-default" 
+                    onClick={() => setIsProfileDropdownOpen(false)} 
+                  />
+                  
+                  <div className="absolute right-0 top-full mt-1.5 w-48 bg-white border border-stone-200 shadow-none rounded-none z-50 py-1 divide-y divide-stone-100 animate-fade-in animate-duration-150">
+                    
+                    {/* Ringkasan Akun Untuk Tampilan Mobile */}
+                    <div className="px-3.5 py-2.5 sm:hidden bg-stone-50">
+                      <p className="text-[9px] font-bold tracking-wider uppercase text-stone-900 truncate">{currentStaffName}</p>
+                      <p className="text-[7px] text-stone-400 tracking-widest uppercase mt-0.5">{isSuperAdmin ? "SUPER ADMIN" : "STAFF ADMIN"}</p>
+                    </div>
+
+                    {/* Tombol Logout Utama Panel */}
+                    <div className="py-0.5">
+                      <button
+                        onClick={() => {
+                            setIsProfileDropdownOpen(false);
+                            onLogout(); 
+                          }}
+                          className="w-full text-left px-3.5 py-2.5 text-[9px] font-bold tracking-widest uppercase text-red-600 hover:bg-stone-950 hover:text-white transition-all rounded-none font-mono cursor-pointer flex items-center gap-2"
+                        >
+                        <LogOut className="w-3 h-3 shrink-0" />
+                        <span>LogOut</span>
+                      </button>
+                    </div>
+
+                  </div>
+                </>
+              )}
+            </div>
+
           </div>
         </header>
 
@@ -387,52 +431,7 @@ export default function AdminView({
                     <p className="text-xs text-stone-500 mt-1 uppercase tracking-wider font-light">Active revenue velocity and product distribution statistics.</p>
                   </div>
 
-                  {/* Curved Area SVG Chart line */}
-                  <div className="border border-stone-200 rounded-none p-4 bg-stone-50/40">
-                    <div className="flex justify-between items-center mb-2 font-mono uppercase text-[9px] tracking-wider">
-                      <span className="text-stone-600 font-semibold">Revenue Trend (S2 fiscal 2026)</span>
-                      <span className="text-black font-semibold">Jun current: IDR {currentJuneRevenue.toLocaleString('id-ID')}</span>
-                    </div>
-
-                    <div className="relative">
-                      <svg className="w-full h-44 overflow-visible" viewBox="0 0 480 180" preserveAspectRatio="none">
-                        <defs>
-                          <linearGradient id="chartGlow" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#2e2e2e" stopOpacity="0.1" />
-                            <stop offset="100%" stopColor="#2e2e2e" stopOpacity="0.00" />
-                          </linearGradient>
-                        </defs>
-                        {/* Grid lines */}
-                        <line x1="40" y1="20" x2="440" y2="20" stroke="#f5f5f4" strokeWidth="1" />
-                        <line x1="40" y1="57.5" x2="440" y2="57.5" stroke="#f5f5f4" strokeWidth="1" />
-                        <line x1="40" y1="95" x2="440" y2="95" stroke="#f5f5f4" strokeWidth="1" />
-                        <line x1="40" y1="132.5" x2="440" y2="132.5" stroke="#f5f5f4" strokeWidth="1" />
-                        <line x1="40" y1="160" x2="440" y2="160" stroke="#e7e5e4" strokeWidth="1" />
-
-                        {/* Chart Area Fill background */}
-                        <path d={areaPath} fill="url(#chartGlow)" />
-
-                        {/* Chart Line path */}
-                        <path d={linePath} fill="none" stroke="#000000" strokeWidth="1.5" strokeLinecap="square" strokeLinejoin="miter" />
-
-                        {/* Chart Circles (Interaction points) */}
-                        <circle cx="40" cy="135" r="3" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-                        <circle cx="120" cy="115" r="3" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-                        <circle cx="200" cy="95" r="3" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-                        <circle cx="280" cy="70" r="3" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-                        <circle cx="360" cy="50" r="3" fill="#ffffff" stroke="#000000" strokeWidth="1.5" />
-                        <circle cx="440" cy={junCoordY} r="4.5" fill="#000000" stroke="#ffffff" strokeWidth="2" />
-
-                        {/* Chart Labels */}
-                        <text x="40" y="174" fill="#a8a29e" fontSize="8" textAnchor="middle" fontFamily="monospace">JAN</text>
-                        <text x="120" y="174" fill="#a8a29e" fontSize="8" textAnchor="middle" fontFamily="monospace">FEB</text>
-                        <text x="200" y="174" fill="#a8a29e" fontSize="8" textAnchor="middle" fontFamily="monospace">MAR</text>
-                        <text x="280" y="174" fill="#a8a29e" fontSize="8" textAnchor="middle" fontFamily="monospace">APR</text>
-                        <text x="360" y="174" fill="#a8a29e" fontSize="8" textAnchor="middle" fontFamily="monospace">MAY</text>
-                        <text x="440" y="174" fill="#000000" fontSize="8.5" fontWeight="bold" textAnchor="middle" fontFamily="monospace">JUN (LIVE)</text>
-                      </svg>
-                    </div>
-                  </div>
+                  
 
                   {/* Horizontal Bar Chart showing Category Revenue Split */}
                   <div className="space-y-4 font-mono uppercase text-[10px] tracking-wider">
@@ -543,7 +542,7 @@ export default function AdminView({
           <div className="space-y-6 animate-fade-in" id="subtab-catalog">
             <div className="flex justify-between items-center flex-wrap gap-4 font-mono">
               <div>
-                <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest text-[#000000]">PRODUCT INVENTORY DATABASE ({products.length} ITEMS)</h3>
+                <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest">PRODUCT INVENTORY DATABASE ({products.length} ITEMS)</h3>
                 <p className="text-stone-500 text-[9px] uppercase font-light tracking-wider mt-1">Configure formulas, specify stock allocations, and direct catalogue additions.</p>
               </div>
 
@@ -659,7 +658,7 @@ export default function AdminView({
         {activeSubTab === 'orders' && (
           <div className="space-y-6 animate-fade-in" id="subtab-orders">
             <div className="font-mono">
-              <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest text-[#000000]">INCOMING ACQUISITIONS PORTFOLIO ({orders.length} ACTIVE)</h3>
+              <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest">INCOMING ACQUISITIONS PORTFOLIO ({orders.length} ACTIVE)</h3>
               <p className="text-stone-500 text-[9px] uppercase tracking-wider font-light mt-1">Audit customer proof of settlements, register shipping manifests, and manage delivery steps.</p>
             </div>
 
@@ -775,7 +774,7 @@ export default function AdminView({
           <div className="space-y-6" id="subtab-articles">
             <div className="flex justify-between items-center font-mono">
               <div>
-                <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest text-[#000000]">EDITORIAL JOURNAL RELEASES ({articles.length} RELEASES)</h3>
+                <h3 className="text-xs font-serif font-light text-black uppercase tracking-widest">EDITORIAL JOURNAL RELEASES ({articles.length} RELEASES)</h3>
                 <p className="text-stone-500 text-[9px] uppercase font-light tracking-wider mt-1">Compose luxury beauty philosophies, modern streetwear guides, and curated journals.</p>
               </div>
 
@@ -912,7 +911,7 @@ export default function AdminView({
         <div className="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-none max-w-xl w-full overflow-hidden shadow-none border border-stone-300 animate-slide-up">
             <div className="p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center font-mono">
-              <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest text-[#000000]">
+              <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest">
                 {editingId ? `RENEW ENTRY: ${editingId}` : 'REGISTER NEW PLATFORM ITEM'}
               </h3>
               <button 
@@ -928,7 +927,7 @@ export default function AdminView({
               
               <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2">
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">PROMINENT ITEM NAME</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">PROMINENT ITEM NAME</label>
                   <input 
                     type="text" 
                     required
@@ -940,7 +939,7 @@ export default function AdminView({
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">CORE CATEGORY</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">CORE CATEGORY</label>
                   <select 
                     value={formData.category}
                     onChange={(e) => setFormData({ ...formData, category: e.target.value as any })}
@@ -954,7 +953,7 @@ export default function AdminView({
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">RETAIL VALUE (IDR)</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">RETAIL VALUE (IDR)</label>
                   <input 
                     type="number" 
                     required
@@ -965,7 +964,7 @@ export default function AdminView({
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">STOCK ALLOCATION</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">STOCK ALLOCATION</label>
                   <input 
                     type="number" 
                     required
@@ -977,7 +976,7 @@ export default function AdminView({
               </div>
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-[#000000]">DESCRIPTION BRIEF</label>
+                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">DESCRIPTION BRIEF</label>
                 <textarea 
                   rows={3}
                   required
@@ -990,7 +989,7 @@ export default function AdminView({
 
               {formData.category === 'skincare' && (
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500 font-mono">INGREDIENTS LIST (DERMATOLOGY RELEVANT)</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">INGREDIENTS LIST (DERMATOLOGY RELEVANT)</label>
                   <input 
                     type="text" 
                     value={formData.ingredients || ''}
@@ -1003,7 +1002,7 @@ export default function AdminView({
 
               {['apparel', 'accessories'].includes(formData.category) && (
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">SIZE MATRIX ACCENTS</label>
+                  <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">SIZE MATRIX ACCENTS</label>
                   <input 
                     type="text" 
                     value={formData.sizes || ''}
@@ -1015,7 +1014,7 @@ export default function AdminView({
               )}
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">COLOR INTENSITY VARIANTS (COMMA SEPARATED)</label>
+                <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">COLOR INTENSITY VARIANTS (COMMA SEPARATED)</label>
                 <input 
                   type="text" 
                   value={formData.colors || ''}
@@ -1051,7 +1050,7 @@ export default function AdminView({
         <div className="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-none max-w-lg w-full overflow-hidden shadow-none border border-stone-300 animate-slide-up">
             <div className="p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center text-xs font-mono">
-              <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest text-[#000000]">PUBLISH NEW JOURNAL ARTICLE</h3>
+              <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest">PUBLISH NEW JOURNAL ARTICLE</h3>
               <button onClick={() => setIsArticleModalOpen(false)} className="p-1 hover:bg-stone-100 rounded-none cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
@@ -1059,7 +1058,7 @@ export default function AdminView({
 
             <form onSubmit={handleArticleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-[#000000]">JOURNAL ARTICLE TITLE</label>
+                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">JOURNAL ARTICLE TITLE</label>
                 <input 
                   type="text" 
                   required
@@ -1072,7 +1071,7 @@ export default function AdminView({
 
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-[#000000]">EDITORIAL TOPIC</label>
+                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">EDITORIAL TOPIC</label>
                   <select 
                     value={artData.category}
                     onChange={(e) => setArtData({ ...artData, category: e.target.value as any })}
@@ -1085,7 +1084,7 @@ export default function AdminView({
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-[#000000]">ESTIMATED READ TIMES</label>
+                  <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">ESTIMATED READ TIMES</label>
                   <input 
                     type="text" 
                     required
@@ -1097,7 +1096,7 @@ export default function AdminView({
               </div>
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">EXCERPT SNIPPET</label>
+                <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">EXCERPT SNIPPET</label>
                 <input 
                   type="text" 
                   required
@@ -1109,7 +1108,7 @@ export default function AdminView({
               </div>
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">EDITORIAL COMPOSITION (FULL TEXT)</label>
+                <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">EDITORIAL COMPOSITION (FULL TEXT)</label>
                 <textarea 
                   rows={5}
                   required
@@ -1121,7 +1120,7 @@ export default function AdminView({
               </div>
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest text-stone-500">SEARCH TAGS (COMMA SEPARATED)</label>
+                <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">SEARCH TAGS (COMMA SEPARATED)</label>
                 <input 
                   type="text" 
                   value={artData.tags}

@@ -8,6 +8,7 @@ import {
   Article,
   CurrentUser,
   TabName,
+  ActiveRole,
 } from "../types";
 
 // Sub-page imports
@@ -19,6 +20,8 @@ import CustomerWishlistView from "./customer/CustomerWishlistView";
 import CustomerOrdersView from "./customer/CustomerOrdersView";
 import CustomerProfileView from "./customer/CustomerProfileView";
 import CartDrawer from "./customer/CustomerCartDrawer";
+import CustomerLoginForm from "./customer/CustomerLoginForm";
+import CustomerRegisterForm from "./customer/CustomerRegisterForm";
 
 // ─── Props ────────────────────────────────────────────────────────────────────
 
@@ -31,6 +34,7 @@ interface CustomerViewProps {
   cart: CartItem[];
   onUpdateCart: (cart: CartItem[]) => void;
   articles: Article[];
+  onStaffRedirect: (role: ActiveRole, staffName: string) => void;
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
@@ -44,6 +48,7 @@ export default function CustomerView({
   cart,
   onUpdateCart,
   articles,
+  onStaffRedirect,
 }: CustomerViewProps) {
   // ── Navigation State ──────────────────────────────────────────────────────
   const [activeTab, setActiveTab] = useState<TabName>("shop");
@@ -97,6 +102,28 @@ export default function CustomerView({
     triggerToast("Anda telah keluar (Logout).");
     goToShop();
   };
+
+  const handleAuthSuccess = (user: any) => {
+    setCurrentUser(user);
+    setShippingName(user.name);
+    setShippingAddress(user.address);
+    setShippingPhone(user.phone);
+    goToShop(); // Otomatis redirect ke halaman katalog belanja
+  };
+
+  const handleUnifiedLoginIntercept = (role: ActiveRole, user: any) => {
+    if (role === "customer") {
+      // Jika customer, amankan state lokal dan pindah ke halaman katalog belanja
+      setCurrentUser(user);
+      setShippingName(user.name);
+      setShippingAddress(user.address);
+      setShippingPhone(user.phone);
+      goToShop();
+      triggerToast(`Autentikasi Sukses. Selamat datang kembali, ${user.name}.`);
+    } else {
+      onStaffRedirect(role, user.name);
+    }
+  };
   // ── UI State ──────────────────────────────────────────────────────────────
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string>("");
@@ -123,6 +150,7 @@ export default function CustomerView({
   const [shippingAddress, setShippingAddress] = useState<string>(currentUser?.address || "");
   const [shippingPhone, setShippingPhone] = useState<string>(currentUser?.phone || "");
   const [paymentMethod, setPaymentMethod] = useState<string>("verapay");
+  const [activeArticle, setActiveArticle] = useState<Article | null>(null);
 
   // ── Checkout Calculations ─────────────────────────────────────────────────
   const cartSubtotal = cart.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
@@ -198,7 +226,7 @@ export default function CustomerView({
     updated[index].quantity = newQty;
     onUpdateCart(updated);
   };
-
+  
   // ── Order Placement ───────────────────────────────────────────────────────
 
   const handlePlaceOrder = (order: Order) => {
@@ -314,7 +342,11 @@ export default function CustomerView({
                   .toUpperCase()}
               </div>
             ) : (
-              <User className="w-4 h-4 text-stone-800" />
+              <User className={`w-4 h-4 transition-colors ${
+                activeTab === "login-register" 
+                  ? "text-white"
+                  : "text-black" 
+                }`} />
             )}
           </button>
 
@@ -425,11 +457,11 @@ export default function CustomerView({
         {/* EDITORIAL */}
         {activeTab === "articles" && (
           <CustomerEditorialView 
-          articles={articles} 
-          activeArticle={null}
-          onSelectArticle={() => {}}
-          onClearArticle={() => {}}
-          onOpenShop={goToShop}
+            articles={articles} 
+            activeArticle={activeArticle} // Diubah dari hardcoded null
+            onSelectArticle={(article) => setActiveArticle(article)} // Diubah dari () => {}
+            onClearArticle={() => setActiveArticle(null)} // Diubah dari () => {}
+            onOpenShop={goToShop}
           />
         )}
 
@@ -455,18 +487,20 @@ export default function CustomerView({
             currentUser={currentUser}
             isRegistering={isRegistering}
             onToggleRegistering={setIsRegistering}
-            onUpdateCurrentUser={setCurrentUser} // Nama diubah dari onSetUser
+            onUpdateCurrentUser={setCurrentUser}
             onLogout={handleLogout}
             onSaveProfile={handleSaveProfile}
-            onLoginSubmit={handleLoginSubmit}
-            onRegisterSubmit={handleRegisterSubmit}
-            
-            // Kita gunakan ulang setter shipping dari tahap Checkout sebelumnya
             onShippingNameChange={setShippingName}
             onShippingAddressChange={setShippingAddress}
             onShippingPhoneChange={setShippingPhone}
+
+            // TAMBAHKAN TYPE : any DISINI UNTUK MENYEMBUHKAN ERROR TS(2339)
+            onLoginSuccess={(user: any) => handleUnifiedLoginIntercept(user.role, user)}
+            onRegisterSuccess={(user: any) => handleUnifiedLoginIntercept("customer", user)}
+            triggerToast={triggerToast}
           />
         )}
+        
       </main>
 
       {/* ── Footer ─────────────────────────────────────────────────────────── */}
@@ -537,3 +571,7 @@ export default function CustomerView({
     </div>
   );
 }
+function onStaffRedirect(role: string, name: any) {
+  throw new Error("Function not implemented.");
+}
+

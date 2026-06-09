@@ -9,128 +9,86 @@ import { Product, CartItem, Order, Article, AdminUser, AuditLog, ActiveRole } fr
 import CustomerView from './components/CustomerView';
 import AdminView from './components/AdminView';
 import SuperAdminView from './components/SuperAdminView';
-import RoleSelector from './components/RoleSelector';
 
 export default function App() {
-  // Role Selector State
+  // Active Role Engine state
   const [activeRole, setActiveRole] = useState<ActiveRole>('customer');
+  const [currentStaffName, setCurrentStaffName] = useState<string>('');
 
-  // Shared Core States
+  // Core App States
   const [products, setProducts] = useState<Product[]>(initialProducts);
   const [articles, setArticles] = useState<Article[]>(initialArticles);
   const [orders, setOrders] = useState<Order[]>([]);
   const [cart, setCart] = useState<CartItem[]>([]);
-  const [wishlist, setWishlist] = useState<string[]>(['prod-1', 'prod-3']); // Initialized saved items for Maya
-  
-  // Admin & Security Log States
+  const [wishlist, setWishlist] = useState<string[]>(['prod-1', 'prod-3']); 
   const [adminUsers, setAdminUsers] = useState<AdminUser[]>(initialAdmins);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(initialLogs);
 
-  // Helper function to append systems digital logs
+  // Helper Logging System
   const handleAddAuditLog = (action: string, details: string) => {
     const newLog: AuditLog = {
       id: `log-${Date.now()}`,
       action,
       timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
-      user: activeRole === 'customer' ? 'Maya Anindita' : activeRole === 'admin' ? 'Budi Santoso' : 'Super Admin System Seal',
+      user: currentStaffName || 'Customer Portal Session',
       details
     };
     setAuditLogs(prev => [newLog, ...prev]);
   };
 
-  // State Updates: Catalog Products
-  const handleAddProduct = (newProd: Product) => {
-    setProducts(prev => [newProd, ...prev]);
+  // Trigerred saat form login profile mendeteksi akun bertipe Admin / Super Admin
+  const handleStaffRedirect = (role: ActiveRole, staffName: string) => {
+    setCurrentStaffName(staffName);
+    setActiveRole(role); // Mengubah status role global untuk merender workspace baru
+    
+    const workspaceLabel = role === 'admin' ? 'Operations Admin Console' : 'Root Security Dashboard';
+    handleAddAuditLog('Staff Intercept Login', `Staff ${staffName} successfully routed via Single Door Auth into ${workspaceLabel}.`);
   };
 
-  const handleUpdateProduct = (updatedProd: Product) => {
-    setProducts(prev => prev.map(p => p.id === updatedProd.id ? updatedProd : p));
+  // Keluar dari Dashboard Admin kembali ke mode Customer Shop biasa
+  const handleAdminLogout = () => {
+    handleAddAuditLog('Staff Terminated Session', `Staff ${currentStaffName} closed active administration console layout.`);
+    setActiveRole('customer');
+    setCurrentStaffName('');
   };
 
-  const handleDeleteProduct = (id: string) => {
-    setProducts(prev => prev.filter(p => p.id !== id));
-  };
-
-  // State Updates: Orders & Logistics
+  // State Updates Handlers (Catalog & Logistik)
+  const handleAddProduct = (newProd: Product) => setProducts(prev => [newProd, ...prev]);
+  const handleUpdateProduct = (updatedProd: Product) => setProducts(prev => prev.map(p => p.id === updatedProd.id ? updatedProd : p));
+  const handleDeleteProduct = (id: string) => setProducts(prev => prev.filter(p => p.id !== id));
+  
   const handleAddOrder = (newOrder: Order) => {
     setOrders(prev => [newOrder, ...prev]);
-
-    // REAL-TIME STOCK DEDUCTION (User Story satisfaction)
-    setProducts(prevProducts => {
-      const updated = prevProducts.map(p => {
-        const cartItemMatch = newOrder.items.find(item => item.product.id === p.id);
-        if (cartItemMatch) {
-          const newStock = Math.max(0, p.stock - cartItemMatch.quantity);
-          return { ...p, stock: newStock };
-        }
-        return p;
-      });
-      return updated;
-    });
-
-    handleAddAuditLog('Order Placed', `Customer ${newOrder.customerName} submitted transaction ${newOrder.id} totaling Rp ${newOrder.total.toLocaleString('id-ID')}. Stock adjusted.`);
+    setProducts(prevProducts => prevProducts.map(p => {
+      const cartItemMatch = newOrder.items.find(item => item.product.id === p.id);
+      return cartItemMatch ? { ...p, stock: Math.max(0, p.stock - cartItemMatch.quantity) } : p;
+    }));
+    handleAddAuditLog('Order Placed', `Transaction ${newOrder.id} finalized.`);
   };
 
   const handleUpdateOrderStatus = (orderId: string, status: 'pending' | 'paid' | 'shipped' | 'delivered') => {
     setOrders(prev => prev.map(o => o.id === orderId ? { ...o, status } : o));
-    handleAddAuditLog('Order Progress dispatch', `Dispatched order ID ${orderId} step progress to status "${status}".`);
+    handleAddAuditLog('Order Progress Dispatch', `Order ${orderId} updated to ${status}.`);
   };
 
-  // State Updates: Wishlist
   const handleToggleWishlist = (id: string) => {
     const item = products.find(p => p.id === id);
     if (!item) return;
-
-    if (wishlist.includes(id)) {
-      setWishlist(prev => prev.filter(x => x !== id));
-      handleAddAuditLog('Wishlist Removed', `Removed ${item.name} from savings list.`);
-    } else {
-      setWishlist(prev => [...prev, id]);
-      handleAddAuditLog('Wishlist Saved', `Saved ${item.name} to persistent wish registry.`);
-    }
+    setWishlist(prev => prev.includes(id) ? prev.filter(x => x !== id) : [...prev, id]);
   };
 
-  // State Updates: Blog Editorial Articles
-  const handleAddArticle = (newArt: Article) => {
-    setArticles(prev => [newArt, ...prev]);
-  };
-
-  const handleDeleteArticle = (id: string) => {
-    setArticles(prev => prev.filter(a => a.id !== id));
-  };
-
-  // State Updates: Staffs Accounts
-  const handleAddAdminUser = (newAdmin: AdminUser) => {
-    setAdminUsers(prev => [...prev, newAdmin]);
-  };
-
+  const handleAddArticle = (newArt: Article) => setArticles(prev => [newArt, ...prev]);
+  const handleDeleteArticle = (id: string) => setArticles(prev => prev.filter(a => a.id !== id));
+  const handleAddAdminUser = (newAdmin: AdminUser) => setAdminUsers(prev => [...prev, newAdmin]);
   const handleToggleAdminStatus = (id: string) => {
-    setAdminUsers(prev => prev.map(a => {
-      if (a.id === id) {
-        const nextStatus = a.status === 'active' ? 'suspended' : 'active';
-        return { ...a, status: nextStatus };
-      }
-      return a;
-    }));
-  };
-
-  // Handle active role change smooth log
-  const handleRoleChange = (role: ActiveRole) => {
-    setActiveRole(role);
-    const label = role === 'customer' ? 'Customer (Maya Anindita)' : role === 'admin' ? 'Admin Operator (Budi Santoso)' : 'Super Admin Root';
-    handleAddAuditLog('Role Swapped', `Swapped active simulator persona workspace to ${label}.`);
+    setAdminUsers(prev => prev.map(a => a.id === id ? { ...a, status: a.status === 'active' ? 'suspended' : 'active' } : a));
   };
 
   return (
-    <div className="bg-stone-50 select-none">
+    <div className="bg-stone-50 select-none min-h-screen relative">
       
-      {/* Floating simulator mode switcher widget */}
-      <RoleSelector 
-        currentRole={activeRole} 
-        onChangeRole={handleRoleChange} 
-      />
 
-      {/* RENDER ACTIVE USER VIEW */}
+      {/* RENDER VIEW BERDASARKAN HASIL AUTHENTIKASI FORM TUNGGAL */}
       {activeRole === 'customer' && (
         <CustomerView
           products={products}
@@ -141,6 +99,7 @@ export default function App() {
           cart={cart}
           onUpdateCart={setCart}
           articles={articles}
+          onStaffRedirect={handleStaffRedirect} // Meneruskan fungsi pengalihan role
         />
       )}
 
@@ -155,6 +114,8 @@ export default function App() {
           articles={articles}
           onAddArticle={handleAddArticle}
           onDeleteArticle={handleDeleteArticle}
+          currentStaffName={currentStaffName}
+          onLogout={handleAdminLogout} // Meneruskan fungsi logout
         />
       )}
 

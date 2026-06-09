@@ -160,6 +160,27 @@ To repair your skin architecture:
   }
 ];
 
+export const dummyUsers = [
+  {
+    email: 'maya.customer@vera.com',
+    password: 'password123',
+    role: 'customer',
+    name: 'Maya Anindita'
+  },
+  {
+    email: 'budi.operations@vera.com',
+    password: 'password123',
+    role: 'admin',
+    name: 'Budi Santoso'
+  },
+  {
+    email: 'maya.anindita@vera.com',
+    password: 'password123',
+    role: 'super_admin',
+    name: 'Maya Anindita (Acting Super)'
+  }
+];
+
 export const initialAdmins: AdminUser[] = [
   {
     id: 'adm-1',

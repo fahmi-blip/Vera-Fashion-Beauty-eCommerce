@@ -1,4 +1,24 @@
-import type { CustomerProfileViewProps } from "./types";
+import React from "react";
+import CustomerLoginForm from "./CustomerLoginForm";
+import CustomerRegisterForm from "./CustomerRegisterForm";
+import { CustomerUser } from "./types";
+
+interface UpgradedProfileViewProps {
+  currentUser: CustomerUser | null;
+  isRegistering: boolean;
+  onToggleRegistering: (value: boolean) => void;
+  onUpdateCurrentUser: (user: CustomerUser | null) => void;
+  onLogout: () => void;
+  onSaveProfile: (event: React.FormEvent) => void;
+  onShippingNameChange: (value: string) => void;
+  onShippingAddressChange: (value: string) => void;
+  onShippingPhoneChange: (value: string) => void;
+  
+  // Callback tambahan untuk integrasi data dummy
+  onLoginSuccess: (user: any) => void;
+  onRegisterSuccess: (user: any) => void;
+  triggerToast: (msg: string) => void;
+}
 
 export default function CustomerProfileView({
   currentUser,
@@ -7,12 +27,13 @@ export default function CustomerProfileView({
   onUpdateCurrentUser,
   onLogout,
   onSaveProfile,
-  onLoginSubmit,
-  onRegisterSubmit,
   onShippingNameChange,
   onShippingAddressChange,
   onShippingPhoneChange,
-}: CustomerProfileViewProps) {
+  onLoginSuccess,
+  onRegisterSuccess,
+  triggerToast,
+}: UpgradedProfileViewProps) {
   return (
     <div
       className="max-w-2xl mx-auto space-y-12 animate-fade-in"
@@ -35,6 +56,7 @@ export default function CustomerProfileView({
       </div>
 
       {currentUser ? (
+        /* ── KONDISI SUDAH LOGIN: Tampilkan Form Edit Profil ── */
         <div className="bg-white rounded-none p-6 md:p-8 border border-stone-200 shadow-none space-y-6">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-stone-200 pb-5">
             <div className="flex items-center gap-3.5">
@@ -79,9 +101,10 @@ export default function CustomerProfileView({
                 type="text"
                 required
                 value={currentUser.name}
-                onChange={(e) =>
-                  onUpdateCurrentUser({ ...currentUser, name: e.target.value })
-                }
+                onChange={(e) => {
+                  onUpdateCurrentUser({ ...currentUser, name: e.target.value });
+                  onShippingNameChange(e.target.value);
+                }}
                 className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black transition-colors font-mono tracking-wider text-xs"
               />
             </div>
@@ -107,9 +130,10 @@ export default function CustomerProfileView({
                 type="text"
                 required
                 value={currentUser.phone}
-                onChange={(e) =>
-                  onUpdateCurrentUser({ ...currentUser, phone: e.target.value })
-                }
+                onChange={(e) => {
+                  onUpdateCurrentUser({ ...currentUser, phone: e.target.value });
+                  onShippingPhoneChange(e.target.value);
+                }}
                 className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black transition-colors font-mono tracking-wider text-xs"
               />
             </div>
@@ -121,12 +145,10 @@ export default function CustomerProfileView({
                 type="text"
                 required
                 value={currentUser.address}
-                onChange={(e) =>
-                  onUpdateCurrentUser({
-                    ...currentUser,
-                    address: e.target.value,
-                  })
-                }
+                onChange={(e) => {
+                  onUpdateCurrentUser({ ...currentUser, address: e.target.value });
+                  onShippingAddressChange(e.target.value);
+                }}
                 className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black transition-colors font-mono tracking-wider text-xs"
               />
             </div>
@@ -141,6 +163,7 @@ export default function CustomerProfileView({
           </form>
         </div>
       ) : (
+        /* ── KONDISI BELUM LOGIN: Render Selektor Tab & Form Terpisah ── */
         <div className="bg-white rounded-none p-6 md:p-8 border border-stone-200 shadow-none space-y-6 max-w-sm mx-auto">
           <div className="grid grid-cols-2 gap-1 border border-stone-200 p-1 rounded-none bg-stone-50">
             <button
@@ -166,100 +189,16 @@ export default function CustomerProfileView({
           </div>
 
           {!isRegistering ? (
-            <form
-              onSubmit={onLoginSubmit}
-              className="space-y-4 text-xs font-mono"
-            >
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  VIP EMAIL ID
-                </label>
-                <input
-                  type="email"
-                  required
-                  placeholder="maya.anindita@outlook.id"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black uppercase font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  SECURE PASSWORD
-                </label>
-                <input
-                  type="password"
-                  required
-                  placeholder="••••••••••••••"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-black hover:bg-stone-900 border border-black text-white py-4 rounded-none font-medium uppercase text-[9px] tracking-widest transition-colors cursor-pointer font-mono"
-              >
-                AUTHORIZE AND ENTER
-              </button>
-            </form>
-          ) : (
-            <form
-              onSubmit={onRegisterSubmit}
-              className="space-y-4 text-xs font-mono"
-            >
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  FULL NAME
-                </label>
-                <input
-                  name="regName"
-                  type="text"
-                  required
-                  placeholder="Example: Maya Anindita"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black uppercase font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  OFFICIAL EMAIL ADDRESS
-                </label>
-                <input
-                  name="regEmail"
-                  type="email"
-                  required
-                  placeholder="Example: customer@email.id"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black uppercase font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  MOBILE PHONE NUMBER
-                </label>
-                <input
-                  name="regPhone"
-                  type="text"
-                  required
-                  placeholder="Example: +62 812-xxxx-xxxx"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-                  PARCEL DELIVERY ADDRESS
-                </label>
-                <input
-                  name="regAddress"
-                  type="text"
-                  required
-                  placeholder="Example: Jln. Sudirman No 10, Jakarta"
-                  className="w-full bg-white border border-stone-200 p-3 rounded-none focus:outline-none focus:border-black uppercase font-mono text-xs placeholder-stone-400"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full bg-black hover:bg-stone-900 border border-black text-white py-4 rounded-none font-medium uppercase text-[9px] tracking-widest transition-colors cursor-pointer font-mono"
-              >
-                CREATE ACCOUNT & JOIN
-              </button>
-            </form>
-          )}
+      <CustomerLoginForm 
+        onLoginSuccess={onLoginSuccess} // Sekarang nama prop sudah sinkron & tidak error
+        onToast={triggerToast} 
+      />
+    ) : (
+      <CustomerRegisterForm 
+        onRegisterSuccess={onRegisterSuccess} 
+        onToast={triggerToast} 
+      />
+    )}
         </div>
       )}
     </div>
