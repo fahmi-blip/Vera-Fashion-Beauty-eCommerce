@@ -51,8 +51,7 @@ export default function AdminView({
   articles,
   onAddArticle,
   onDeleteArticle,
-  isSuperAdmin = false
-  ,
+  isSuperAdmin = false,
   currentStaffName,
   onLogout,
   handleAdminLogout
