@@ -613,12 +613,12 @@ export default function AdminView({
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-stone-100 border-b border-stone-200 uppercase tracking-widest font-semibold text-[8px] text-stone-600">
                     <tr>
-                      <th className="p-4">ART_TYPE</th>
+                      <th className="p-4">PRODUCT</th>
                       <th className="p-4">CLASSIFY</th>
-                      <th className="p-2">PRICE_VAL</th>
-                      <th className="p-2 text-center">ALLOCATED</th>
+                      <th className="p-2">PRICE</th>
+                      <th className="p-2 text-center">STOCK</th>
                       <th className="p-4">DESCRIPTION & INGREDIENTS</th>
-                      <th className="p-4 text-center">PORT ACTIONS</th>
+                      <th className="p-4 text-center">ACTIONS</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-stone-200 text-stone-800 text-[10px]">
@@ -627,7 +627,17 @@ export default function AdminView({
                         <td className="p-4">
                           <div className="flex items-center gap-3">
                             <div className="w-9 h-9 rounded-none bg-stone-55 border border-stone-200 font-bold text-xs flex items-center justify-center shrink-0">
-                              {p.id === 'prod-1' ? '🌹' : p.id === 'prod-2' ? '💄' : p.id === 'prod-3' ? '⚜️' : '👕'}
+                              {p.image ? (
+                      <img 
+                        src={p.image} 
+                        alt={p.name} 
+                        className="w-full h-full object-fill mix-blend-multiply" 
+                      />
+                    ) : (
+                      <span className="text-[9px] text-center px-1 break-words">
+                        {p.name}
+                      </span>
+                    )}
                             </div>
                             <div>
                               <strong className="text-black font-semibold uppercase">{p.name}</strong>

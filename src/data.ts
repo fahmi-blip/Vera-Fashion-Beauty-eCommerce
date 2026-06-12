@@ -24,7 +24,7 @@ export const initialProducts: Product[] = [
     description: 'A revolutionary lip tint formula that glides on like liquid silk, drying down to an ultra-comfortable velvet-matte finish. Soft-blur effect that minimizes lip lines while staying hydrate-locked.',
     rating: 4.7,
     reviewCount: 98,
-    image: '/gambar/lip_tint.png',
+    image: '/gambar/faceprimer.png', // We can style an elegant digital thumbnail or CSS backdrop-gradient with Rose/Gold glow
     categoryColor: 'from-rose-200 to-amber-200 border-amber-300 text-amber-900',
     stock: 30,
     colors: ['Petal Soft', 'Crimson Satin', 'Warm Sienna', 'Berry Cashmere'],
@@ -35,10 +35,10 @@ export const initialProducts: Product[] = [
     name: 'Belt',
     category: 'accessories',
     price: 680000,
-    description: 'Waterproof, hypoallergenic, and timeless chunkier huggie hoops crafted in thick 24k gold plating on 925 Sterling Silver. Designed for everyday premium style that never tarnishes.',
+    description: 'A statement belt crafted from ethically sourced Italian leather, featuring a unique rose gold buckle design inspired by blooming roses. The perfect accessory to elevate any outfit with a touch of elegance.',
     rating: 4.9,
     reviewCount: 76,
-    image: 'gold_hoops',
+    image: '/gambar/sabuk.png', // We can style an elegant digital thumbnail or CSS backdrop-gradient with Gold/Yellow glow
     categoryColor: 'from-yellow-100 to-amber-200 border-yellow-300 text-yellow-800',
     stock: 12,
     sizes: ['S (12mm)', 'M (16mm)', 'L (20mm)'],
@@ -46,17 +46,17 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-4',
-    name: 'Méridien Tailored Linen Blazer',
+    name: 'Men Outfit',
     category: 'apparel',
     price: 890000,
     description: 'An elegantly tailored single-breasted blazer made from premium French flax linen. Features structured shoulders, natural tortoiseshell effect buttons, and a clean modern silhouette perfect for work-to-weekend styling.',
     rating: 4.6,
     reviewCount: 54,
-    image: 'linen_blazer',
+    image: '/gambar/men.png',
     categoryColor: 'from-amber-100 to-orange-100 border-amber-200 text-amber-800',
     stock: 18,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
-    colors: ['Oatmeal', 'Sand', 'Sage Green', 'Midnight Ink'],
+    colors: ['cream','brown'],
     isFeatured: true
   },
   {
@@ -67,7 +67,35 @@ export const initialProducts: Product[] = [
     description: 'Our award-winning daily moisturizer engineered with 5 essential ceramides, squalane, and colloidal oat. Reinforces compromised skin barriers, locking in hydration for up to 48 hours without greasiness.',
     rating: 4.9,
     reviewCount: 204,
-    image: 'barrier_cream',
+    image: '/gambar/toner.png',
+    categoryColor: 'from-blue-50 to-indigo-100 border-indigo-200 text-indigo-800',
+    stock: 60,
+    ingredients: 'Ceramide NP, Ceramide AP, Ceramide EOP, Phytosphingosine, Squalane, Avena Sativa (Oat) Kernel Flour, Hyaluronic Acid, Centella Asiatica Extract.',
+    isFeatured: false
+  },
+  {
+    id: 'prod-10',
+    name: 'Moisturizer',
+    category: 'skincare',
+    price: 380000,
+    description: 'Our award-winning daily moisturizer engineered with 5 essential ceramides, squalane, and colloidal oat. Reinforces compromised skin barriers, locking in hydration for up to 48 hours without greasiness.',
+    rating: 4.9,
+    reviewCount: 204,
+    image: '/gambar/mosturaizer.png',
+    categoryColor: 'from-blue-50 to-indigo-100 border-indigo-200 text-indigo-800',
+    stock: 60,
+    ingredients: 'Ceramide NP, Ceramide AP, Ceramide EOP, Phytosphingosine, Squalane, Avena Sativa (Oat) Kernel Flour, Hyaluronic Acid, Centella Asiatica Extract.',
+    isFeatured: false
+  },
+  {
+    id: 'prod-11',
+    name: 'Sunblock',
+    category: 'skincare',
+    price: 380000,
+    description: 'Our sunblock is a lightweight, non-greasy formula that provides broad-spectrum SPF 50 protection. Infused with antioxidants and hydrating ingredients, it shields your skin from harmful UV rays while keeping it nourished and radiant throughout the day.',
+    rating: 4.9,
+    reviewCount: 204,
+    image: '/gambar/sunscreen.png',
     categoryColor: 'from-blue-50 to-indigo-100 border-indigo-200 text-indigo-800',
     stock: 60,
     ingredients: 'Ceramide NP, Ceramide AP, Ceramide EOP, Phytosphingosine, Squalane, Avena Sativa (Oat) Kernel Flour, Hyaluronic Acid, Centella Asiatica Extract.',
@@ -81,10 +109,38 @@ export const initialProducts: Product[] = [
     description: 'Crafted using the highest grade, friction-reducing hypoallergenic vegan satin. Helps prevent friction hair damage, facial sleeping creases, and shields delicate skin around original lock-in facial skin treatments.',
     rating: 4.5,
     reviewCount: 41,
-    image: 'satin_duo',
+    image: '/gambar/dasi.png',
     categoryColor: 'from-violet-100 to-purple-100 border-violet-200 text-violet-800',
     stock: 25,
     colors: ['Champagne Gold', 'Blush Pink', 'Ethereal Blue', 'Charcoal Slate'],
+    isFeatured: false
+  },
+  {
+    id: 'prod-14',
+    name: 'Bag',
+    category: 'accessories',
+    price: 495000,
+    description: 'Crafted using the highest grade, friction-reducing hypoallergenic vegan satin. Helps prevent friction hair damage, facial sleeping creases, and shields delicate skin around original lock-in facial skin treatments.',
+    rating: 4.5,
+    reviewCount: 41,
+    image: '/gambar/tas.png',
+    categoryColor: 'from-violet-100 to-purple-100 border-violet-200 text-violet-800',
+    stock: 25,
+    colors: ['Champagne Gold', 'Blush Pink'],
+    isFeatured: false
+  },
+  {
+    id: 'prod-9',
+    name: 'Glasses',
+    category: 'accessories',
+    price: 115000,
+    description: 'Crafted using the highest grade, friction-reducing hypoallergenic vegan satin. Helps prevent friction hair damage, facial sleeping creases, and shields delicate skin around original lock-in facial skin treatments.',
+    rating: 4.5,
+    reviewCount: 41,
+    image: '/gambar/glasses.png',
+    categoryColor: 'from-violet-100 to-purple-100 border-violet-200 text-violet-800',
+    stock: 30,
+    colors: ['Champagne Gold', 'Pink', 'Ethereal Blue', 'Charcoal Slate'],
     isFeatured: false
   },
   {
@@ -95,25 +151,53 @@ export const initialProducts: Product[] = [
     description: 'An ultra-fine weightless finishing powder infused with biological light-reflective silk proteins to set makeup of active women. Delivers a soft-focus translucent radiance rather than a flat chalky look.',
     rating: 4.6,
     reviewCount: 38,
-    image: 'glow_powder',
+    image: '/gambar/foundation.png',
     categoryColor: 'from-amber-50 to-pink-50 border-pink-200 text-amber-800',
     stock: 0, // Mock an Out of Stock product for Admin and User viewing!
     colors: ['Translucent', 'Warm Peach', 'Deep Golden'],
     isFeatured: false
   },
   {
+    id: 'prod-12',
+    name: 'Concealer',
+    category: 'cosmetics',
+    price: 320000,
+    description: 'A creamy, buildable concealer enriched with light-diffusing pigments and skin-nourishing botanicals. Provides medium to full coverage with a natural finish that blurs imperfections while keeping the under-eye area hydrated and radiant.',
+    rating: 4.6,
+    reviewCount: 38,
+    image: '/gambar/concealer.png',
+    categoryColor: 'from-amber-50 to-pink-50 border-pink-200 text-amber-800',
+    stock: 20, // Mock an Out of Stock product for Admin and User viewing!
+    colors: ['Translucent', 'Warm Peach', 'Deep Golden'],
+    isFeatured: false
+  },
+  {
+    id: 'prod-13',
+    name: 'Eye Shadow Palette',
+    category: 'cosmetics',
+    price: 220000,
+    description: 'A versatile eyeshadow palette featuring 12 curated shades in a mix of matte, satin, and shimmer finishes. Infused with skin-loving ingredients like vitamin E and jojoba oil, it delivers rich pigmentation while nourishing the delicate eye area.',
+    rating: 4.6,
+    reviewCount: 38,
+    image: '/gambar/eyeshadow.png',
+    categoryColor: 'from-amber-50 to-pink-50 border-pink-200 text-amber-800',
+    stock: 20, // Mock an Out of Stock product for Admin and User viewing!
+    colors: ['Translucent', 'Warm Peach', 'Deep Golden'],
+    isFeatured: false
+  },
+  {
     id: 'prod-8',
-    name: 'Sculpted Organic Cotton Rib Top',
+    name: 'Women Outfit',
     category: 'apparel',
     price: 325000,
     description: 'Expertly knitted ribbed top in mediumweight GOTS-certified organic cotton with a hint of stretch. Features a refined scoop neckline and engineered darts that embrace your body shape with luxurious comfort.',
     rating: 4.8,
     reviewCount: 61,
-    image: 'cotton_top',
+    image: '/gambar/women.png',
     categoryColor: 'from-stone-100 to-neutral-200 border-stone-300 text-stone-800',
     stock: 35,
     sizes: ['XS', 'S', 'M', 'L'],
-    colors: ['Chalk White', 'Cafe Latte', 'Warm Taupe', 'Olive'],
+    colors: ['Chalk White', 'Green Matcha'],
     isFeatured: false
   }
 ];
@@ -136,7 +220,7 @@ Focusing on premium organic materials like linen, tencel, and organic cotton all
     readTime: '4 min read',
     author: 'Vera Editorial Staff',
     date: '2026-05-15',
-    image: 'fashion_art',
+    image: '/gambar/artikel1.png',
     tags: ['Sustainable', 'Workwear', 'Capsule Wardrobe']
   },
   {
@@ -156,7 +240,7 @@ To repair your skin architecture:
     readTime: '6 min read',
     author: 'Dr. Evelyn Carter, Medical Advisor',
     date: '2026-05-28',
-    image: 'beauty_art',
+    image: '/gambar/artikel2.png',
     tags: ['Skincare', 'Barrier Repair', 'Glass Skin']
   }
 ];

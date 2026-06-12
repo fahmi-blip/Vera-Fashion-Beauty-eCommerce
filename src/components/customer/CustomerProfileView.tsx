@@ -43,8 +43,8 @@ export default function CustomerProfileView({
         
         <h2 className="text-2xl font-serif font-light text-black tracking-[0.1em] uppercase">
           {currentUser
-            ? "VERA PARTNER STATUS: ACTIVE"
-            : "ACCESS PORTAL & MEMBERSHIP"}
+            ? "ACCOUNT PROFILE"
+            : "VERA: FASHION & BEAUTY"}
         </h2>
         <p className="text-xs text-stone-500 max-w-sm mx-auto tracking-wide font-light leading-relaxed">
           {currentUser

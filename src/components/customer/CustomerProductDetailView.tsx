@@ -22,7 +22,7 @@ export default function CustomerProductDetailView({
           onClick={onBackToShop}
           className="flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-slate-550 hover:text-slate-900 transition-colors cursor-pointer"
         >
-          Kembali ke Katalog
+          Back to Shop
         </button>
         <span className="text-[10px] font-mono text-slate-400 uppercase tracking-widest">
           VERA Exclusive Beauty Detail
@@ -31,10 +31,18 @@ export default function CustomerProductDetailView({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-none p-6 md:p-12  border-stone-200 shadow-none">
         <div className="space-y-4">
-          <div className="rounded-none overflow-hidden border border-stone-200 flex items-center justify-center p-8 bg-stone-50/50 min-h-80 relative">
-            {renderProductIllustration(
-              selectedProduct.id,
-              selectedProduct.category,
+          <div className="rounded-none overflow-hidden border border-stone-200 flex items-center justify-center  bg-stone-50/50 min-h-80 relative">
+            {selectedProduct.image ? (
+              <img 
+                src={selectedProduct.image} 
+                alt={selectedProduct.name} 
+                className="w-full h-full max-h-[600px] object-fill mix-blend-multiply" 
+              />
+            ) : (
+              renderProductIllustration(
+                selectedProduct.id,
+                selectedProduct.category
+              )
             )}
             <span className="absolute top-4 left-4 text-[9px] font-mono uppercase bg-black text-white font-light tracking-widest px-3 py-1 rounded-none border border-black">
               {selectedProduct.category}

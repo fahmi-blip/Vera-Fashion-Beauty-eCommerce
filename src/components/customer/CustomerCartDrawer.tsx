@@ -70,7 +70,17 @@ export default function CartDrawer({
                 <div key={index} className="py-4 flex gap-4 justify-between items-start">
                   <div className="flex gap-3.5 items-center">
                     <div className="w-14 h-14 bg-stone-50 border border-stone-200 flex items-center justify-center text-xl shrink-0 select-none rounded-none">
-                      {PRODUCT_EMOJIS[item.product.id] || '🛍️'}
+                      {item.product.image ? (
+                      <img 
+                        src={item.product.image} 
+                        alt={item.product.name} 
+                        className="w-full h-full object-fill mix-blend-multiply" 
+                      />
+                    ) : (
+                      <span className="text-[9px] text-center px-1 break-words">
+                        {item.product.name}
+                      </span>
+                    )}
                     </div>
                     <div className="text-xs space-y-1">
                       <h4 className="font-serif font-semibold text-black uppercase tracking-wider line-clamp-1">{item.product.name}</h4>

@@ -11,10 +11,6 @@ export default function CustomerOrdersView({
         <h2 className="text-2xl font-serif text-black font-light tracking-wide uppercase">
           ORDER LOGISTICS TRACKER
         </h2>
-        <p className="text-stone-500 text-xs mt-1 uppercase font-mono tracking-wider">
-          Visualize real-time shipping milestones for your secure couture
-          shipments.
-        </p>
       </div>
 
       {orders.length === 0 ? (

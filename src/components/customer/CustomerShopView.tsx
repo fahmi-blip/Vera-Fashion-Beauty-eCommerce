@@ -1,6 +1,7 @@
 import { Heart, Search } from "lucide-react";
 import type { Product } from "../../types";
 import type { CustomerShopViewProps } from "./types";
+import { useState, useEffect } from "react";
 
 export default function CustomerShopView({
   products,
@@ -24,23 +25,55 @@ export default function CustomerShopView({
       product.description.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+  const carouselImages = [
+  '/gambar/foto1.jpg', 
+  '/gambar/foto2.jpg',
+  '/gambar/foto3.jpg'
+  ];
 
+  const [currentSlide, setCurrentSlide] = useState(0);
+  useEffect(() => {
+  const timer = setInterval(() => {
+    setCurrentSlide((prevSlide) => (prevSlide + 1) % carouselImages.length);
+  }, 4000);
+
+  // Bersihkan timer saat komponen di-unmount agar tidak bocor (memory leak)
+  return () => clearInterval(timer);
+}, []);
   return (
     <div className="space-y-12" id="customer-shop-view">
-      <div className="bg-[#0a0a0a] rounded-none p-8 md:p-16 text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 border border-stone-900 shadow-none">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.05),transparent)]" />
-
+      <div className="bg-[#0a0a0a88] rounded-none p-8 md:p-16 text-white relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-12 border shadow-none min-h-[600px]">
+  
+        {/* --- MULAI BAGIAN CAROUSEL BACKGROUND --- */}
+        {carouselImages.map((img, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
+              index === currentSlide ? 'opacity-65' : 'opacity-0'
+            }`}
+            style={{
+              backgroundImage: `url(${img})`,
+              backgroundSize: 'cover',
+              backgroundPosition: 'center',
+            }}
+          />
+        ))}
+        {/* Layer gradasi agar teks tetap terbaca meskipun gambar background terang */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/10 to-transparent z-0" />
+        
+      
+      
         <div className="space-y-6 md:w-2/3 relative z-10 text-center md:text-left">
-          <span className="border border-stone-800 text-stone-400 font-mono text-[9px] uppercase tracking-[0.3em] font-light px-3.5 py-1.5 rounded-none bg-black/50">
+          <span className="border border-stone-800 text-stone-400 font-mono text-[9px] uppercase tracking-[0.3em] font-light px-3.5 py-1.5 rounded-none bg-black/50 backdrop-blur-sm">
             VERA / CAPSULE SELECTIONS
           </span>
-          <h1 className="text-4xl md:text-6xl font-serif tracking-[0.05em] leading-none font-extralight text-white uppercase">
+          <h1 className="text-4xl md:text-6xl font-serif tracking-[0.05em] leading-none font-extralight text-white uppercase drop-shadow-md">
             Where Pure Aesthetics <br />
             <span className="italic font-normal font-serif text-stone-300">
               Meets Couture Science
             </span>
           </h1>
-          <p className="text-stone-400 text-xs md:text-sm max-w-xl font-light leading-relaxed tracking-wider">
+          <p className="text-stone-400 text-xs md:text-sm max-w-xl font-light leading-relaxed tracking-wider drop-shadow-md">
             Carefully curated skincare serums and hypoallergenic bespoke apparel
             tailored for elite digital professionals. Apply luxury voucher code{" "}
             <strong className="text-white font-mono font-medium">
@@ -61,37 +94,13 @@ export default function CustomerShopView({
               onClick={() => {
                 onSelectCategory("apparel");
               }}
-              className="bg-transparent text-white border border-stone-700 font-mono text-[10px] tracking-widest uppercase px-6 py-3 rounded-none hover:bg-stone-900/50 transition-colors cursor-pointer"
+              className="bg-black/50 backdrop-blur-sm text-white border border-stone-700 font-mono text-[10px] tracking-widest uppercase px-6 py-3 rounded-none hover:bg-stone-900/80 transition-colors cursor-pointer"
             >
               COUTURE APPAREL
             </button>
           </div>
         </div>
-
-        <div className="md:w-1/3 flex justify-center relative z-10">
-          <div className="border border-stone-900 rounded-none p-5 bg-black/90 backdrop-blur-md shadow-2xl flex flex-col gap-3 min-w-[245px]">
-            <div className="text-[9px] font-mono text-stone-400 font-light tracking-[0.25em] uppercase text-center border-b border-stone-905 pb-3">
-              MOST COVETED CREATIONS
-            </div>
-            <div className="flex items-center gap-4">
-              <div className="w-12 h-12 rounded-none bg-stone-900 border border-stone-800 flex items-center justify-center font-bold text-lg text-white font-serif">
-                V
-              </div>
-              <div>
-                <div className="text-[11px] font-light tracking-widest text-white uppercase">
-                  Hydro-Glow Lipid
-                </div>
-                <div className="text-[10px] font-mono text-stone-300">
-                  IDR 420.000
-                </div>
-              </div>
-            </div>
-            <div className="text-[9px] font-mono text-stone-400 mt-1 flex items-center justify-between tracking-wider">
-              <span>★ 4.8 EXQUISITE</span>
-              <span className="text-stone-300">AVAILABLE</span>
-            </div>
-          </div>
-        </div>
+            
       </div>
 
       <div
@@ -199,8 +208,16 @@ export default function CustomerShopView({
                     className="cursor-pointer"
                     onClick={() => onSelectProduct(product)}
                   >
-                    <div className="bg-stone-50/50 p-4 border border-stone-100 flex items-center justify-center min-h-[180px]">
-                      {renderProductIllustration(product.id, product.category)}
+                    <div className="flex items-center justify-center min-h-[200px]">
+                      {product.image ? (
+                        <img 
+                          src={product.image} 
+                          alt={product.name} 
+                          className='w-full h-full max-h-[260px] object-fill mix-blend-multiply ' 
+                        />
+                      ) : (
+                        renderProductIllustration(product.id, product.category)
+                      )}
                     </div>
 
                     <div className="flex flex-wrap items-center gap-1.5 mt-4">

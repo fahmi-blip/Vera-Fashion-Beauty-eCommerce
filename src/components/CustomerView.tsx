@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShoppingBag, Check, User } from "lucide-react";
+import { ShoppingBag, Check, User, TruckIcon } from "lucide-react";
 
 import {
   Product,
@@ -278,7 +278,7 @@ export default function CustomerView({
         <div className="flex items-center gap-3">
           <div className="relative group cursor-pointer" onClick={goToShop}>
             <span className="text-2xl font-serif font-black tracking-[0.25em] text-black">
-              V E R A
+              <a href="https://vera-184e51.webflow.io/">VERA</a>
             </span>
             <div className="absolute -bottom-1 left-0 w-0 h-[1px] bg-black group-hover:w-full transition-all duration-300" />
           </div>
@@ -298,11 +298,11 @@ export default function CustomerView({
               label: `WISHLIST (${wishlist.length})`,
               badge: null,
             },
-            {
-              tab: "orders" as TabName,
-              label: `TRACK ORDERS (${orders.length})`,
-              badge: null,
-            },
+            // {
+            //   tab: "orders" as TabName,
+            //   label: `TRACK ORDERS (${orders.length})`,
+            //   badge: null,
+            // },
           ].map(({ tab, label }) => (
             <button
               key={tab}
@@ -322,6 +322,33 @@ export default function CustomerView({
         {/* Icon Utilities */}
         <div className="flex items-center gap-3">
           {/* Profile Button */}
+            <button
+            onClick={() => setActiveTab("orders")}
+            className="relative p-2 text-stone-900 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
+            aria-label="Track orders"
+            id="cart-trigger-btn"
+          >
+            <TruckIcon className="w-4 h-4" />
+            {orders.length > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-black text-white font-bold font-mono text-[8px] w-4 h-4 flex items-center justify-center border border-white">
+                {orders.length}
+              </span>
+            )}
+          </button>
+          {/* Cart Button */}
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-2 text-stone-900 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
+            aria-label="Keranjang Belanja"
+            id="cart-trigger-btn"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            {totalCartQty > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 bg-black text-white font-bold font-mono text-[8px] w-4 h-4 flex items-center justify-center border border-white">
+                {totalCartQty}
+              </span>
+            )}
+          </button>
           <button
             onClick={() => navigate("login-register")}
             className={`p-2 transition-all flex items-center justify-center border cursor-pointer rounded-none ${
@@ -347,21 +374,6 @@ export default function CustomerView({
                   ? "text-white"
                   : "text-black" 
                 }`} />
-            )}
-          </button>
-
-          {/* Cart Button */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="relative p-2 text-stone-900 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
-            aria-label="Keranjang Belanja"
-            id="cart-trigger-btn"
-          >
-            <ShoppingBag className="w-4 h-4" />
-            {totalCartQty > 0 && (
-              <span className="absolute -top-1.5 -right-1.5 bg-black text-white font-bold font-mono text-[8px] w-4 h-4 flex items-center justify-center border border-white">
-                {totalCartQty}
-              </span>
             )}
           </button>
 
@@ -518,7 +530,7 @@ export default function CustomerView({
               
               <div className="flex items-center gap-8 md:gap-12">
                 <button className="hover:text-black transition-colors cursor-pointer">
-                  Home
+                  <a href="https://vera-184e51.webflow.io/">Home</a>
                 </button>
                 <button 
                   onClick={goToShop} 
@@ -534,7 +546,7 @@ export default function CustomerView({
               <span className="text-stone-400 font-light text-lg hidden md:block select-none">+</span>
               
               <div className="flex items-center gap-8">
-                <a href="#" className="hover:text-black transition-colors cursor-pointer">IG</a>
+                <a href="https://instagram.com/fahmisyhbb" className="hover:text-black transition-colors cursor-pointer">IG</a>
                 <a href="#" className="hover:text-black transition-colors cursor-pointer">LI</a>
               </div>
             </div>

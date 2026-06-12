@@ -51,13 +51,17 @@ export default function CustomerWishlistView({
               >
                 <div className="flex gap-4 items-center">
                   <div className="w-20 h-20 bg-stone-50 border border-stone-200 rounded-none overflow-hidden flex items-center justify-center font-bold text-xs text-stone-900 font-serif">
-                    {product.id === "prod-1"
-                      ? "🌹 Rose"
-                      : product.id === "prod-2"
-                        ? "💄 Lip"
-                        : product.id === "prod-3"
-                          ? "⚜️ Gold"
-                          : "👕 Blazer"}
+                    {product.image ? (
+                      <img 
+                        src={product.image} 
+                        alt={product.name} 
+                        className="w-full h-full object-fill mix-blend-multiply" 
+                      />
+                    ) : (
+                      <span className="text-[9px] text-center px-1 break-words">
+                        {product.name}
+                      </span>
+                    )}
                   </div>
                   <div className="space-y-1">
                     <span className="text-[8px] uppercase font-mono tracking-widest text-stone-400 block">
