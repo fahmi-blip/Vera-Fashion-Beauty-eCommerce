@@ -571,7 +571,3 @@ export default function CustomerView({
     </div>
   );
 }
-function onStaffRedirect(role: string, name: any) {
-  throw new Error("Function not implemented.");
-}
-

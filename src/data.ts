@@ -1,15 +1,16 @@
 import { Product, Article, AdminUser, AuditLog } from './types';
 
+
 export const initialProducts: Product[] = [
   {
     id: 'prod-1',
-    name: 'Rosé Infused Hydro-Glow Serum',
+    name: 'facial wash',
     category: 'skincare',
-    price: 420000, // IDR or similar, let's use Indonesian Rupiah (since Maya & Budi are premium Indonesian professional personas in the PRD, e.g., 420.000 IDR makes it feel local and highly detailed)
+    price: 80000, // IDR or similar, let's use Indonesian Rupiah (since Maya & Budi are premium Indonesian professional personas in the PRD, e.g., 420.000 IDR makes it feel local and highly detailed)
     description: 'A luxurious, lightweight, and deeply hydrating serum infused with Bulgarian organic rosewater, dual-weight hyaluronic acid, and niacinamide to restore resilience and natural radiance.',
     rating: 4.8,
     reviewCount: 124,
-    image: 'rose_serum', // We can style an elegant digital thumbnail or CSS backdrop-gradient with Rose/Gold glow
+    image: '/gambar/facialwash.png', // We can style an elegant digital thumbnail or CSS backdrop-gradient with Rose/Gold glow
     categoryColor: 'from-pink-100 to-rose-200 border-rose-300 text-rose-800',
     stock: 45,
     ingredients: 'Organic Rosa Damascena Flower Water, Glycerin, Sodium Hyaluronate (Dual Weight), Niacinamide (Vitamin B3), Camellia Sinensis (Green Tea) Leaf Extract, Allantoin, Panthenol.',
@@ -17,13 +18,13 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-2',
-    name: 'Silk Sheen Velvet Lip Tint',
+    name: 'Face Primer',
     category: 'cosmetics',
     price: 245000,
     description: 'A revolutionary lip tint formula that glides on like liquid silk, drying down to an ultra-comfortable velvet-matte finish. Soft-blur effect that minimizes lip lines while staying hydrate-locked.',
     rating: 4.7,
     reviewCount: 98,
-    image: 'velvet_lip',
+    image: '/gambar/lip_tint.png',
     categoryColor: 'from-rose-200 to-amber-200 border-amber-300 text-amber-900',
     stock: 30,
     colors: ['Petal Soft', 'Crimson Satin', 'Warm Sienna', 'Berry Cashmere'],
@@ -31,7 +32,7 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-3',
-    name: '24k Vermeil Gold Minimalist Hoops',
+    name: 'Belt',
     category: 'accessories',
     price: 680000,
     description: 'Waterproof, hypoallergenic, and timeless chunkier huggie hoops crafted in thick 24k gold plating on 925 Sterling Silver. Designed for everyday premium style that never tarnishes.',
@@ -60,7 +61,7 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-5',
-    name: 'Ceramide Barrier Defense Cream',
+    name: 'Toner',
     category: 'skincare',
     price: 380000,
     description: 'Our award-winning daily moisturizer engineered with 5 essential ceramides, squalane, and colloidal oat. Reinforces compromised skin barriers, locking in hydration for up to 48 hours without greasiness.',
@@ -74,7 +75,7 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-6',
-    name: 'Ambiance Satin Sleep & Eye Mask Duo',
+    name: 'Tie',
     category: 'accessories',
     price: 195000,
     description: 'Crafted using the highest grade, friction-reducing hypoallergenic vegan satin. Helps prevent friction hair damage, facial sleeping creases, and shields delicate skin around original lock-in facial skin treatments.',
@@ -88,7 +89,7 @@ export const initialProducts: Product[] = [
   },
   {
     id: 'prod-7',
-    name: 'Luminous Glow Glass Skin Powder',
+    name: 'Foundation Powder',
     category: 'cosmetics',
     price: 320000,
     description: 'An ultra-fine weightless finishing powder infused with biological light-reflective silk proteins to set makeup of active women. Delivers a soft-focus translucent radiance rather than a flat chalky look.',

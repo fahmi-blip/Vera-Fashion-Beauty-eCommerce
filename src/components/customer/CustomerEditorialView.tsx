@@ -79,7 +79,7 @@ export default function CustomerEditorialView({
                 onClick={() => onSelectArticle(article)}
                 className="inline-flex items-center gap-1.5 font-bold text-stone-900 hover:text-stone-500 group cursor-pointer transition-colors"
               >
-                <span>Baca Selengkapnya</span>
+                <span>Read More</span>
                 <ArrowRight className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" />
               </button>
             </div>

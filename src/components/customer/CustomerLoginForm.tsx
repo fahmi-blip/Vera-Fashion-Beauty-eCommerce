@@ -66,7 +66,7 @@ export default function CustomerLoginForm({ onLoginSuccess, onToast }: CustomerL
       
       <div>
         <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-          PORTAL EMAIL ID
+          EMAIL
         </label>
         <input
           type="email"
@@ -80,7 +80,7 @@ export default function CustomerLoginForm({ onLoginSuccess, onToast }: CustomerL
 
       <div>
         <label className="font-semibold text-stone-500 block mb-1 uppercase tracking-[0.2em] text-[8px]">
-          SECURE ACCESS KEY
+          PASSWORD
         </label>
         <input
           type="password"
@@ -96,13 +96,13 @@ export default function CustomerLoginForm({ onLoginSuccess, onToast }: CustomerL
         type="submit"
         className="w-full bg-black hover:bg-stone-900 border border-black text-white py-4 rounded-none font-medium uppercase text-[9px] tracking-widest transition-colors cursor-pointer font-mono"
       >
-        VALIDATE AND ENTER SYSTEM
+        LOGIN
       </button>
 
       {/* Simulator Shortcut Panel (Klik untuk isi otomatis) */}
       <div className="mt-6 pt-4 border-t border-stone-200">
         <span className="block text-[7px] text-stone-400 uppercase tracking-widest font-bold mb-2">
-          SIMULATOR QUICK INTEGRATION SHORTCUT
+          SIMULATOR EMAIL
         </span>
         <div className="space-y-1.5">
           {unifiedDummyUsers.map((u) => (

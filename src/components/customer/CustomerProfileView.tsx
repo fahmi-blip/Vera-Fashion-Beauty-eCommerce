@@ -40,9 +40,7 @@ export default function CustomerProfileView({
       id="login-register-view-page"
     >
       <div className="text-center pt-8 space-y-3">
-        <span className="text-[9px] font-mono border border-stone-200 text-stone-600 bg-white px-3.5 py-1.5 uppercase tracking-widest">
-          SECURE AUTHENTICATION GATEWAY
-        </span>
+        
         <h2 className="text-2xl font-serif font-light text-black tracking-[0.1em] uppercase">
           {currentUser
             ? "VERA PARTNER STATUS: ACTIVE"
@@ -72,12 +70,6 @@ export default function CustomerProfileView({
                 <h4 className="text-sm font-serif font-semibold text-black uppercase tracking-wider">
                   {currentUser.name}
                 </h4>
-                <div className="flex items-center gap-2 mt-1">
-                  <span className="w-1.5 h-1.5 bg-black rounded-none" />
-                  <span className="text-[9px] text-stone-550 font-mono uppercase tracking-[0.15em] font-medium">
-                    PLATINUM PARTNER VIP
-                  </span>
-                </div>
               </div>
             </div>
 

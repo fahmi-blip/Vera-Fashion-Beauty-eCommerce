@@ -6,7 +6,7 @@ export interface Product {
   description: string;
   rating: number;
   reviewCount: number;
-  image: string;
+  image: string; // Image source or URL
   categoryColor: string; // Dynamic placeholder hue for styling
   stock: number;
   ingredients?: string; // Skincare specific
