@@ -547,7 +547,7 @@ export default function CustomerView({
               
               <div className="flex items-center gap-8">
                 <a href="https://instagram.com/fahmisyhbb" className="hover:text-black transition-colors cursor-pointer">IG</a>
-                <a href="#" className="hover:text-black transition-colors cursor-pointer">LI</a>
+                <a href="https://linkedin.com/in/fahmi-syihaab" className="hover:text-black transition-colors cursor-pointer">LI</a>
               </div>
             </div>
 

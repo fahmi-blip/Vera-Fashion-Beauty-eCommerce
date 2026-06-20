@@ -12,9 +12,9 @@ export interface Product {
   ingredients?: string; // Skincare specific
   sizes?: string[]; // Apparel/Accessories specific
   colors?: string[]; // Color variants
+  colorImages?: Record<string, string>;
   isFeatured?: boolean;
 }
-
 export interface CartItem {
   product: Product;
   quantity: number;

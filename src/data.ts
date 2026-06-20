@@ -57,6 +57,10 @@ export const initialProducts: Product[] = [
     stock: 18,
     sizes: ['XS', 'S', 'M', 'L', 'XL'],
     colors: ['cream','brown'],
+    colorImages: {
+      'cream': '/gambar/men.png', // Sesuaikan dengan nama file Anda
+      'brown': '/gambar/men_black.png'
+    },
     isFeatured: true
   },
   {
@@ -198,6 +202,10 @@ export const initialProducts: Product[] = [
     stock: 35,
     sizes: ['XS', 'S', 'M', 'L'],
     colors: ['Chalk White', 'Green Matcha'],
+    colorImages: {
+      'Chalk White': '/gambar/women.png', 
+      'Green Matcha': '/gambar/women_green.png'
+    },
     isFeatured: false
   }
 ];

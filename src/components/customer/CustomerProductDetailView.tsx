@@ -15,6 +15,9 @@ export default function CustomerProductDetailView({
   onAddToCart,
   renderProductIllustration,
 }: CustomerProductDetailViewProps) {
+  const currentImage = chosenColor && selectedProduct.colorImages?.[chosenColor] 
+  ? selectedProduct.colorImages[chosenColor] 
+  : selectedProduct.image;
   return (
     <div className="space-y-8 animate-fade-in" id="product-detail-view-page">
       <div className="flex items-center justify-between border-b border-slate-200 pb-4">
@@ -32,11 +35,11 @@ export default function CustomerProductDetailView({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 bg-white rounded-none p-6 md:p-12  border-stone-200 shadow-none">
         <div className="space-y-4">
           <div className="rounded-none overflow-hidden border border-stone-200 flex items-center justify-center  bg-stone-50/50 min-h-80 relative">
-            {selectedProduct.image ? (
+            {currentImage ? (
               <img 
-                src={selectedProduct.image} 
-                alt={selectedProduct.name} 
-                className="w-full h-full max-h-[600px] object-fill mix-blend-multiply" 
+                src={currentImage}
+                alt={`${selectedProduct.name} ${chosenColor || ''}`} 
+                className="w-full h-full object-fill mix-blend-multiply transition-all duration-300" 
               />
             ) : (
               renderProductIllustration(
