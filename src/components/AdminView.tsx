@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import {useNavigate} from "react-router-dom";
 import { 
   Briefcase, 
   TrendingUp, 
@@ -21,7 +22,8 @@ import {
   X,
   ChevronDown,
   LogOut,
-  UserPlus
+  UserPlus,
+  Menu
 } from 'lucide-react';
 import { Product, Order, Article, AdminUser } from '../types';
 
@@ -86,6 +88,7 @@ export default function AdminView({
     colors: '',
   });
   const [isProfileDropdownOpen, setIsProfileDropdownOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   // Article Form states
   const [isArticleModalOpen, setIsArticleModalOpen] = useState(false);
@@ -254,29 +257,54 @@ export default function AdminView({
   
 
   return (
-    <div className="bg-stone-50 text-black min-h-screen font-mono flex flex-col md:flex-row" id="admin-view-root">
-      
-      {/* LEFT SIDEBAR (Classic Dashboard Sidebar) */}
-      <aside className="w-64 bg-black border-r border-stone-800 flex flex-col shrink-0 min-h-screen">
+    <div className="bg-stone-50 text-black min-h-screen font-mono flex" id="admin-view-root">
+
+      {/* Backdrop gelap untuk menutup drawer sidebar di tampilan mobile */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 z-40 bg-black/60 md:hidden"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
+      {/* LEFT SIDEBAR (Drawer di mobile, statis di desktop) */}
+      <aside
+        className={`w-64 bg-black border-r border-stone-800 flex flex-col shrink-0 fixed md:static inset-y-0 left-0 z-50 min-h-screen transform transition-transform duration-300 ease-in-out ${
+          isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+        } md:translate-x-0`}
+      >
         {/* Area Logo Premium (Hanya logo di bagian atas sidebar) */}
-        <div className="p-6 border-b border-stone-900 flex items-center gap-2">
-          <span className="text-lg font-serif font-black tracking-[0.3em] text-white">
-            VERA
-          </span>
-          <span className="text-[7px] font-mono bg-stone-900 border border-stone-800 text-stone-400 px-1.5 py-0.5 tracking-widest font-bold">
-            CORE
-          </span>
+        <div className="p-6 border-b border-stone-900 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-lg font-serif font-black tracking-[0.3em] text-white">
+              VERA
+            </span>
+            <span className="text-[7px] font-mono bg-stone-900 border border-stone-800 text-stone-400 px-1.5 py-0.5 tracking-widest font-bold">
+              CORE
+            </span>
+          </div>
+          {/* Tombol tutup drawer, hanya tampil di mobile */}
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden p-1.5 text-stone-400 hover:text-white hover:bg-stone-900 transition-colors rounded-none cursor-pointer"
+            aria-label="Tutup menu"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
 
         {/* Menu Navigasi Utama */}
-        <nav className="flex-1 p-4 space-y-1.5">
+        <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto">
           {sidebarMenu.map(sb => {
             const IconComp = sb.icon;
             const isActive = activeSubTab === sb.id;
             return (
               <button
                 key={sb.id}
-                onClick={() => setActiveSubTab(sb.id as any)}
+                onClick={() => {
+                  setActiveSubTab(sb.id as any);
+                  setIsSidebarOpen(false);
+                }}
                 className={`w-full flex items-center gap-2.5 px-3.5 py-3 text-[10px] tracking-widest uppercase transition-all text-left cursor-pointer rounded-none border ${
                   isActive 
                     ? 'bg-white text-black border-white font-bold' 
@@ -292,23 +320,34 @@ export default function AdminView({
       </aside>
 
       {/* RIGHT SIDE PANEL WORKSTATION */}
-      <div className="flex-1 flex flex-col min-w-0 bg-stone-50 overflow-y-auto">
+      <div className="flex-1 flex flex-col min-w-0 bg-stone-50 overflow-y-auto min-h-screen">
         
         {/* Toolbar header */}
-        <header className="bg-white border-b border-stone-200 px-6 py-4 flex flex-col sm:flex-row justify-between items-center gap-3 shrink-0 relative">
+        <header className="bg-white border-b border-stone-200 px-4 sm:px-6 py-4 flex flex-col sm:flex-row justify-between sm:items-center gap-3 shrink-0 relative">
           
-          {/* Sisi Kiri: Informasi Judul & Akses Kontrol */}
-          <div>
-            <h1 className="text-xs font-serif font-bold text-black tracking-[0.2em] uppercase">
-              {activeSubTab}
-            </h1>
-            <p className="text-[9px] text-stone-500 font-mono uppercase tracking-wider mt-0.5">
-              Access level: <strong className="text-black font-semibold">{isSuperAdmin ? 'SUPER SYSTEM ROOT' : 'COUTURE MANAGEMENT'}</strong> &bull; Total records: {products.length} catalog items.
-            </p>
+          {/* Sisi Kiri: Tombol Menu Mobile + Informasi Judul & Akses Kontrol */}
+          <div className="flex items-center gap-3 min-w-0">
+            {/* Tombol Hamburger, hanya tampil di mobile/tablet */}
+            <button
+              onClick={() => setIsSidebarOpen(true)}
+              className="md:hidden p-2 border border-stone-200 hover:border-black transition-colors rounded-none cursor-pointer shrink-0"
+              aria-label="Buka menu navigasi"
+            >
+              <Menu className="w-4 h-4" />
+            </button>
+
+            <div className="min-w-0">
+              <h1 className="text-xs font-serif font-bold text-black tracking-[0.2em] uppercase truncate">
+                {activeSubTab}
+              </h1>
+              <p className="text-[9px] text-stone-500 font-mono uppercase tracking-wider mt-0.5 truncate">
+                Access level: <strong className="text-black font-semibold">{isSuperAdmin ? 'SUPER SYSTEM ROOT' : 'COUTURE MANAGEMENT'}</strong> &bull; Total records: {products.length} catalog items.
+              </p>
+            </div>
           </div>
 
           {/* Sisi Kanan: Widget Utilitas SSL & Dropdown Profil Akun Staff */}
-          <div className="flex items-center gap-4 flex-wrap text-xs font-mono">
+          <div className="flex items-center gap-4 flex-wrap text-xs font-mono justify-end">
 
             {/* Dropdown Menu Container */}
             <div className="relative" id="admin-profile-dropdown-root">
@@ -376,7 +415,7 @@ export default function AdminView({
         </header>
 
         {/* Main Admin Workstation Area */}
-        <main className="flex-1 p-6 md:p-8 space-y-6" id="admin-main-viewport">
+        <main className="flex-1 p-4 sm:p-6 md:p-8 space-y-6 overflow-x-hidden" id="admin-main-viewport">
         
         {/* SUBTAB: ANALYTICS DASHBOARD */}
         {activeSubTab === 'dashboard' && (() => {
@@ -607,8 +646,8 @@ export default function AdminView({
               </button>
             </div>
 
-            {/* Catalog list in high-end grid */}
-            <div className="bg-white border border-stone-200 rounded-none shadow-none font-mono" id="catalog-table-container">
+            {/* Catalog list in high-end grid (desktop table) */}
+            <div className="hidden md:block bg-white border border-stone-200 rounded-none shadow-none font-mono" id="catalog-table-container">
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-xs font-mono">
                   <thead className="bg-stone-100 border-b border-stone-200 uppercase tracking-widest font-semibold text-[8px] text-stone-600">
@@ -698,6 +737,65 @@ export default function AdminView({
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Catalog list versi kartu, hanya tampil di mobile/tablet kecil */}
+            <div className="md:hidden space-y-3" id="catalog-card-container">
+              {products.map(p => (
+                <div key={p.id} className="bg-white border border-stone-200 p-4 space-y-3 font-mono" id={`card-product-${p.id}`}>
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-none bg-stone-50 border border-stone-200 font-bold text-xs flex items-center justify-center shrink-0 overflow-hidden">
+                      {p.image ? (
+                        <img src={p.image} alt={p.name} className="w-full h-full object-fill mix-blend-multiply" />
+                      ) : (
+                        <span className="text-[8px] text-center px-1 break-words">{p.name}</span>
+                      )}
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <strong className="text-black font-semibold uppercase text-[11px] block truncate">{p.name}</strong>
+                      <span className="text-[9px] text-stone-400 block font-mono">CODE: {p.id}</span>
+                    </div>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        onClick={() => handleOpenEdit(p)}
+                        className="p-1.5 border border-stone-200 text-stone-600 hover:text-black hover:border-black transition-colors rounded-none"
+                        title="Ubah Produk"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                      </button>
+                      <button
+                        onClick={() => onDeleteProduct(p.id)}
+                        className="p-1.5 border border-stone-200 text-stone-600 hover:text-red-600 hover:border-red-300 transition-colors rounded-none"
+                        title="Hapus Produk"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between text-[9px] uppercase tracking-wider">
+                    <span className="bg-stone-50 text-stone-800 text-[8px] font-semibold tracking-wider px-2 py-0.5 border border-stone-200">
+                      {p.category}
+                    </span>
+                    <span className="font-semibold text-black">IDR {p.price.toLocaleString('id-ID')}</span>
+                    <span className={`px-2 py-1 text-[8px] font-semibold uppercase ${
+                      p.stock <= 0 
+                        ? 'border border-red-500 bg-white text-red-600 font-bold animate-pulse' 
+                        : p.stock < 15 
+                        ? 'border border-stone-400 bg-stone-50 text-stone-800' 
+                        : 'border border-stone-800 bg-black text-white'
+                    }`}>
+                      {p.stock} UNITS
+                    </span>
+                  </div>
+
+                  <p className="line-clamp-2 text-stone-500 text-[10px] uppercase font-light leading-relaxed">{p.description}</p>
+                  <div className="flex flex-wrap gap-x-3 gap-y-1">
+                    {p.ingredients && <span className="text-[8px] text-stone-400 uppercase tracking-widest">✔ Formula Active Matrix</span>}
+                    {(p.sizes || p.colors) && <span className="text-[8px] text-stone-400 uppercase tracking-widest">✔ Standardized Sizing Matrices</span>}
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         )}
@@ -1050,7 +1148,7 @@ export default function AdminView({
       {isProductModalOpen && (
         <div className="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-none max-w-xl w-full overflow-hidden shadow-none border border-stone-300 animate-slide-up">
-            <div className="p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center font-mono">
+            <div className="p-4 sm:p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center font-mono">
               <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest">
                 {editingId ? `RENEW ENTRY: ${editingId}` : 'REGISTER NEW PLATFORM ITEM'}
               </h3>
@@ -1063,10 +1161,10 @@ export default function AdminView({
               </button>
             </div>
 
-            <form onSubmit={handleProductSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+            <form onSubmit={handleProductSubmit} className="p-4 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
               
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="col-span-1 sm:col-span-2">
                   <label className="font-semibold text-stone-500 block mb-1 font-mono uppercase text-[9px] tracking-widest">PROMINENT ITEM NAME</label>
                   <input 
                     type="text" 
@@ -1189,14 +1287,14 @@ export default function AdminView({
       {isArticleModalOpen && (
         <div className="fixed inset-0 z-50 bg-[#000000]/60 backdrop-blur-xs flex items-center justify-center p-4">
           <div className="bg-white rounded-none max-w-lg w-full overflow-hidden shadow-none border border-stone-300 animate-slide-up">
-            <div className="p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center text-xs font-mono">
+            <div className="p-4 sm:p-6 border-b border-stone-200 bg-stone-50 flex justify-between items-center text-xs font-mono">
               <h3 className="font-serif font-light text-black text-xs uppercase tracking-widest">PUBLISH NEW JOURNAL ARTICLE</h3>
               <button onClick={() => setIsArticleModalOpen(false)} className="p-1 hover:bg-stone-100 rounded-none cursor-pointer">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleArticleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
+            <form onSubmit={handleArticleSubmit} className="p-4 sm:p-6 space-y-4 max-h-[80vh] overflow-y-auto text-xs">
               <div>
                 <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">JOURNAL ARTICLE TITLE</label>
                 <input 
@@ -1209,7 +1307,7 @@ export default function AdminView({
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="font-semibold text-stone-700 block mb-1 font-mono uppercase text-[9px] tracking-widest">EDITORIAL TOPIC</label>
                   <select 

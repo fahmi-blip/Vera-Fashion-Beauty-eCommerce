@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ShoppingBag, Check, User, TruckIcon } from "lucide-react";
+import { ShoppingBag, Check, User, TruckIcon, Menu, X } from "lucide-react";
 
 import {
   Product,
@@ -126,6 +126,7 @@ export default function CustomerView({
   };
   // ── UI State ──────────────────────────────────────────────────────────────
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [successToast, setSuccessToast] = useState<string>("");
 
   // ── Helpers ───────────────────────────────────────────────────────────────
@@ -138,6 +139,7 @@ export default function CustomerView({
   const navigate = (tab: TabName) => {
     setActiveTab(tab);
     setIsCartOpen(false);
+    setIsMobileMenuOpen(false);
   };
 
   const handleGoToCheckout = () => {
@@ -298,11 +300,6 @@ export default function CustomerView({
               label: `WISHLIST (${wishlist.length})`,
               badge: null,
             },
-            // {
-            //   tab: "orders" as TabName,
-            //   label: `TRACK ORDERS (${orders.length})`,
-            //   badge: null,
-            // },
           ].map(({ tab, label }) => (
             <button
               key={tab}
@@ -320,13 +317,13 @@ export default function CustomerView({
         </nav>
 
         {/* Icon Utilities */}
-        <div className="flex items-center gap-3">
-          {/* Profile Button */}
-            <button
-            onClick={() => setActiveTab("orders")}
+        <div className="flex items-center gap-2">
+
+          {/* Track Orders — tampil di semua ukuran layar */}
+          <button
+            onClick={() => navigate("orders")}
             className="relative p-2 text-stone-900 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
             aria-label="Track orders"
-            id="cart-trigger-btn"
           >
             <TruckIcon className="w-4 h-4" />
             {orders.length > 0 && (
@@ -335,12 +332,12 @@ export default function CustomerView({
               </span>
             )}
           </button>
-          {/* Cart Button */}
+
+          {/* Cart Button — tampil di semua ukuran layar */}
           <button
             onClick={() => setIsCartOpen(true)}
             className="relative p-2 text-stone-900 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
             aria-label="Keranjang Belanja"
-            id="cart-trigger-btn"
           >
             <ShoppingBag className="w-4 h-4" />
             {totalCartQty > 0 && (
@@ -349,9 +346,11 @@ export default function CustomerView({
               </span>
             )}
           </button>
+
+          {/* Account Button — hanya tampil di desktop (md ke atas) */}
           <button
             onClick={() => navigate("login-register")}
-            className={`p-2 transition-all flex items-center justify-center border cursor-pointer rounded-none ${
+            className={`hidden md:flex p-2 transition-all items-center justify-center border cursor-pointer rounded-none ${
               activeTab === "login-register"
                 ? "bg-black border-black text-white"
                 : "border-stone-200 text-stone-850 hover:bg-stone-50"
@@ -370,40 +369,58 @@ export default function CustomerView({
               </div>
             ) : (
               <User className={`w-4 h-4 transition-colors ${
-                activeTab === "login-register" 
+                activeTab === "login-register"
                   ? "text-white"
-                  : "text-black" 
+                  : "text-black"
                 }`} />
             )}
           </button>
 
-          {/* Mobile Quick Nav */}
-          <div className="flex md:hidden items-center gap-1 border-l border-stone-200 pl-1">
+          {/* Hamburger Button — hanya tampil di mobile */}
+          <button
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            className="md:hidden p-2 border border-stone-200 hover:bg-stone-50 rounded-none transition-all cursor-pointer"
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen
+              ? <X className="w-4 h-4" />
+              : <Menu className="w-4 h-4" />
+            }
+          </button>
+        </div>
+      </header>
+
+      {/* ── Mobile Hamburger Dropdown ────────────────────────────────────────── */}
+      {isMobileMenuOpen && (
+        <div className="md:hidden sticky top-[73px] z-20 bg-white border-b border-stone-200 shadow-sm">
+          <nav className="flex flex-col">
             {[
-              { tab: "shop" as TabName, label: "SHOP" },
+              { tab: "shop" as TabName, label: "Shop" },
+              { tab: "articles" as TabName, label: "Articles" },
+              { tab: "wishlist" as TabName, label: `Wishlist (${wishlist.length})` },
               {
                 tab: "login-register" as TabName,
-                label: currentUser ? "ACCOUNT" : "LOGIN",
+                label: currentUser
+                  ? `Account — ${currentUser.name.split(" ")[0]}`
+                  : "Login / Register",
               },
-              { tab: "wishlist" as TabName, label: `WISH(${wishlist.length})` },
-              { tab: "orders" as TabName, label: "TRACK" },
             ].map(({ tab, label }) => (
               <button
                 key={tab}
                 onClick={() => navigate(tab)}
-                className={`p-1 text-[9px] uppercase tracking-wider font-medium ${
+                className={`w-full text-left px-6 py-4 text-[11px] uppercase tracking-[0.2em] font-medium border-b border-stone-100 last:border-b-0 transition-colors cursor-pointer ${
                   activeTab === tab ||
                   (tab === "shop" && activeTab === "product-detail")
                     ? "bg-black text-white"
-                    : "text-stone-600 hover:bg-stone-50"
+                    : "text-stone-700 hover:bg-stone-50"
                 }`}
               >
                 {label}
               </button>
             ))}
-          </div>
+          </nav>
         </div>
-      </header>
+      )}
 
       {/* ── Main Content Area ───────────────────────────────────────────────── */}
       <main

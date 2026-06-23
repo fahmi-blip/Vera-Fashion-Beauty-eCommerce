@@ -82,7 +82,9 @@ export default function CustomerOrdersView({
                   <h4 className="text-[10px] font-mono tracking-widest uppercase font-light text-stone-400">
                     LOGISTICS DISPATCH TRACKER
                   </h4>
-
+                  <p className="text-[10px] font-bold text-black font-mono leading-relaxed tracking-widest">
+                    Untuk Mencoba Simulasi Perubahan Status Pengiriman, Silahkan Beralih ke Role Admin (Budi Santoso) melalui Panel Sudut Kanan Atas. Setelah itu, Anda dapat mengubah status pesanan dari "Pending" menjadi "Shipped" atau "Delivered". Perubahan ini akan langsung disinkronkan dan tercermin pada tampilan pelanggan.
+                  </p>
                   <div className="relative pt-2">
                     <div className="absolute left-6 top-8 bottom-8 w-[1px] bg-stone-200 block" />
 

@@ -2,6 +2,7 @@ import { Heart, Search } from "lucide-react";
 import type { Product } from "../../types";
 import type { CustomerShopViewProps } from "./types";
 import { useState, useEffect } from "react";
+import {Filter, X} from "lucide-react";
 
 export default function CustomerShopView({
   products,
@@ -30,7 +31,7 @@ export default function CustomerShopView({
   '/gambar/foto2.jpg',
   '/gambar/foto3.jpg'
   ];
-
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   useEffect(() => {
   const timer = setInterval(() => {
@@ -107,6 +108,7 @@ export default function CustomerShopView({
         className="bg-white rounded-none p-6 border border-stone-200/80 flex flex-col lg:flex-row gap-6 items-center justify-between"
         id="catalog-controls"
       >
+        
         <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
           {[
             { id: "all", label: "ALL COLLECTIONS" },
@@ -127,7 +129,36 @@ export default function CustomerShopView({
               {cat.label}
             </button>
           ))}
+
+        </div> 
+        
+        {/* {isFilterOpen && (
+      <div className="fixed inset-0 z-50 bg-white p-4">
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="font-bold">Filter Produk</h2>
+          <button onClick={() => setIsFilterOpen(false)}><X /></button>
         </div>
+        {[
+            { id: "all", label: "ALL COLLECTIONS" },
+            { id: "skincare", label: "SKINCARE" },
+            { id: "cosmetics", label: "COSMETICS" },
+            { id: "accessories", label: "ACCESSORIES" },
+            { id: "apparel", label: "COUTURE APPAREL" },
+          ].map((cat) => (
+            <button
+              key={cat.id}
+              onClick={() => onSelectCategory(cat.id)}
+              className={`px-5 py-2.5 rounded-none text-[10px] font-mono tracking-widest uppercase transition-colors cursor-pointer ${
+                selectedCategory === cat.id
+                  ? "bg-black text-white border border-black"
+                  : "bg-white text-stone-500 hover:text-black border border-stone-200 hover:border-black"
+              }`}
+            >
+              {cat.label}
+            </button>
+          ))}
+      </div>
+    )} */}
 
         <div className="relative w-full lg:w-80">
           <span className="absolute inset-y-0 left-3.5 flex items-center pointer-events-none text-stone-400">
@@ -150,6 +181,7 @@ export default function CustomerShopView({
           )}
         </div>
       </div>
+      
 
       <div>
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 mb-8 border-b border-stone-200 pb-4">
