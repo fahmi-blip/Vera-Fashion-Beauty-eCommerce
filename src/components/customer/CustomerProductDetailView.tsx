@@ -137,7 +137,7 @@ export default function CustomerProductDetailView({
               <span className="font-mono text-[9px] text-stone-400 uppercase block tracking-widest font-semibold">
                 SELECT COLOUR TONE:
               </span>
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 {selectedProduct.colors.map((color) => (
                   <button
                     key={color}
